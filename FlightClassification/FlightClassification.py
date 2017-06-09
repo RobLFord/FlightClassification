@@ -1,10 +1,6 @@
 #Python 3.6.1
 import numpy as np
 import pandas as pd
-from sklearn.cross_validation import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
-from sklearn import tree
 
 def create_df():
 	good_attributes = [
@@ -26,13 +22,22 @@ def create_df():
 		'Mil',
 	]
 
-	filename = '2016-06-20-0000Z.json'
-	f= open(filename, 'r', encoding="utf8")
-	objects = ijson.items(f, 'acList.item')
+	useFile = True
+	
+	if useFile:
+		filename = '2016-06-20-0000Z.json'
+		f= open(filename, 'r', encoding="utf8")
+		objects = ijson.items(f, 'acList.item')
+	else:
+		# Has not been tested yet
+		# import urllib.request, json
+		# with urllib.request.urlopen("https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json") as url:
+			# objects = json.loads(url.read().decode())
 
 	#Parsing json for Flights only
 	flights = (o for o in objects if o['Species'] == 1)
 	flights = (o for o in flights if o['Mil'] == False)
+	# flights = (o for o in flights if o['Gnd'] == False)
 	
 	#Parsing data based on attributes we want to use
 	data = []
@@ -105,27 +110,30 @@ if __name__ == '__main__':
 	if not error:
 		print(df.head()) #If receive encoding error enter for windows $ chcp 65001
 		
-		
 		# ------------------- This Section had not been tested yet ------------------------#
-		X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size = 0.3, random_state = 100)
+		# from sklearn.cross_validation import train_test_split
+		# from sklearn.tree import DecisionTreeClassifier
+		# from sklearn.metrics import accuracy_score
+		# from sklearn import tree
+		# X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size = 0.3, random_state = 100)
 		
-		clf_gini = DecisionTreeClassifier(criterion = "gini", random_state = 100,
-										max_depth=3, min_samples_leaf=5)
+		# clf_gini = DecisionTreeClassifier(criterion = "gini", random_state = 100,
+										# max_depth=3, min_samples_leaf=5)
 										
-		clf_gini.fit(X_train, y_train)
+		# clf_gini.fit(X_train, y_train)
 		
-		clf_entropy = DecisionTreeClassifier(criterion = "entropy", random_state = 100,
-										max_depth=3, min_samples_leaf=5)
+		# clf_entropy = DecisionTreeClassifier(criterion = "entropy", random_state = 100,
+										# max_depth=3, min_samples_leaf=5)
 										
-		clf_entropy.fit(X_train, y_train)
+		# clf_entropy.fit(X_train, y_train)
 		
-		y_pred = clf_gini.predict(X_test)
+		# y_pred = clf_gini.predict(X_test)
 		
-		y_pred_en = clf_entropy.predict(X_test)
+		# y_pred_en = clf_entropy.predict(X_test)
 		
-		print("Accuracy of Gini ", accuracy_score(y_test,y_pred)*100)
+		# print("Accuracy of Gini ", accuracy_score(y_test,y_pred)*100)
 		
-		print("Accuracy of Entropy ", accuracy_score(y_test,y_pred_en)*100)
+		# print("Accuracy of Entropy ", accuracy_score(y_test,y_pred_en)*100)
 		
 		#----------------------------------------------------------------------------------#
 
