@@ -1,6 +1,7 @@
 #Python 3.6.1
 import numpy as np
 import pandas as pd
+import ijson
 
 def create_df():
 	good_attributes = [
