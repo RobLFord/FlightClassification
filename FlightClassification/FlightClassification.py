@@ -33,7 +33,6 @@ def create_df():
 	#Parsing json for Flights only
 	flights = (o for o in objects if o['Species'] == 1)
 	flights = (o for o in flights if o['Mil'] == False)
-	# flights = (o for o in flights if o['Gnd'] == False)
 	
 	#Parsing data based on attributes we want to use
 	data = []
