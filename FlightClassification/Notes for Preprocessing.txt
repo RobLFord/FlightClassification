@@ -24,5 +24,6 @@ TSecs  - The number of seconds that the aircraft has been tracked for
 Type   - The aircraft model's ICAO type code
 To     - The code and name of the arrival airport
 From   - The code and name of the departure airport
+Mil    - True if the aircraft appears to be operated by the military. Based on certain range of ICAO hex codes that the aircraft broadcasts.
 
-http://www.virtualradarserver.co.uk/Documentation/Formats/AircraftList.aspx
+https://www.adsbexchange.com/datafields/
