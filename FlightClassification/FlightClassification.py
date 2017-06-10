@@ -21,6 +21,8 @@ def create_df():
 		'Cou',
 		'Species',
 		'Mil',
+		'Lat',
+		'Long'
 	]
 
 	useFile = True
@@ -29,15 +31,15 @@ def create_df():
 		filename = '2016-06-20-0000Z.json'
 		f= open(filename, 'r', encoding="utf8")
 		objects = ijson.items(f, 'acList.item')
-	else:
+	#else:
 		# Has not been tested yet
 		# import urllib.request, json
 		# with urllib.request.urlopen("https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json") as url:
 			# objects = json.loads(url.read().decode())
 
 	#Parsing json for Flights only
-	flights = (o for o in objects if o['Species'] == 1)
-	flights = (o for o in flights if o['Mil'] == False)
+	flights = (o for o in objects if o['Species'] == 1) #filter on ground aircraft
+	flights = (o for o in flights if o['Mil'] == False) #only look at civilian aviation
 	# flights = (o for o in flights if o['Gnd'] == False)
 	
 	#Parsing data based on attributes we want to use
@@ -56,6 +58,7 @@ def create_df():
 	
 def preprocessing(df):
 	#check to make sure there are not duplicate Ids
+
 	Ids_dup = df.duplicated('Id')
 	for IDs in Ids_dup:
 		if IDs:
@@ -63,14 +66,19 @@ def preprocessing(df):
 			error = True
 		else:
 			error = False
-		
+
+
 	if not error:
 		#See if there are any missing values
 		# print(pd.isnull(df[:30]))
-		
+
 		# Remove flights that have landed
 		GROUNDED = df[df['Gnd'] == True].index.tolist()
-		df = df.drop(df.index[GROUNDED])
+		df = df.drop(df.index[GROUNDED],)
+
+		#Remove flights without GPS information
+		no_gps = df[pd.isnull(df['Lat'])].index.tolist()
+		df = df.drop(no_gps)
 		
 		# Changing target classifier to have International and Domestic Fields
 		US = df.Cou == 'United States'
@@ -89,6 +97,28 @@ def preprocessing(df):
 		df.Alt = df.Alt.round()
 		df.TSecs = df.TSecs.fillna(df.TSecs.mean())
 		df.TSecs = df.TSecs.round()
+
+		#Limit results to near JFK Int'l Airport
+		#JFK Latitude: 40.644623
+		#JFK Longitude: -73.784180
+		#Let's try a 50 mi radius around the airport, using www.gpsvisualizer.com
+		#dlat = .726358
+		#dlon = .972934
+		#Max Latitude: 41.370981
+		#Min Latitude: 39.918265
+		#Max Longitude: -72.811246
+		#Min Longitude: -74.757114
+
+		#Latitude Constraint
+		outside_latitude_bounds = df[df['Lat'] < 39.9182].index.tolist()
+		outside_latitude_bounds += df[df['Lat'] > 41.3710].index.tolist()
+		df = df.drop(outside_latitude_bounds)
+
+		#Longitude Constraint
+		outside_longitude_bounds = df[df['Long'] < -74.7571].index.tolist()
+		outside_longitude_bounds += df[df['Long'] > -72.8112].index.tolist()
+		df = df.drop(outside_longitude_bounds)
+
 				
 		bad_attributes = [
 			'Id',
@@ -109,7 +139,8 @@ if __name__ == '__main__':
 	error, df = preprocessing(df)
 	
 	if not error:
-		print(df.head()) #If receive encoding error enter for windows $ chcp 65001
+		print(df.to_string()) #If receive encoding error enter for windows $ chcp 65001
+		print("Done.")
 		
 		# ------------------- This Section had not been tested yet ------------------------#
 		# from sklearn.cross_validation import train_test_split
