@@ -2,7 +2,6 @@
 import numpy as np
 import pandas as pd
 import ijson
-import time
 
 def create_df():
 	good_attributes = [
@@ -18,6 +17,7 @@ def create_df():
 		'TSecs',
 		'Type',
 		'To',
+		'From',
 		'Cou',
 		'Species',
 		'Mil',
@@ -53,8 +53,6 @@ def create_df():
 	flight_DF = pd.DataFrame(data, columns=good_attributes)
 	return flight_DF
 
-
-	
 def preprocessing(df):
 
 	# Remove flights that have landed
@@ -78,6 +76,11 @@ def preprocessing(df):
 	df.loc[US,'Cou'] = 'Domestic'
 	df.loc[NONUS,'Cou'] = 'International'
 
+	# Boolean for whether the flight is a major US carrier
+	us_icaos = ["JBU", "AAL", "DAL", "UAL", "ASA", "AAY", "FFT", "HAL", "SWA", "NKS", "VRD", "ENY", "ASQ", "SKW"]
+	icao_pattern = '|'.join(us_icaos)
+	df['MajorUsCarrier'] = df['OpIcao'].str.contains(icao_pattern)
+
 	# Fixing values with negative values
 	LESSTHAN_0 = df.Alt < 0
 	df.loc[LESSTHAN_0,'Alt'] = None
@@ -86,11 +89,10 @@ def preprocessing(df):
 	df['DateTime'] = pd.to_datetime(df['PosTime'], unit='ms')
 	df['Weekday'] = df['DateTime'].dt.dayofweek
 
-	#Create boolean field for whether Int'l Flight - training/verification use
+	# Create boolean field for whether Int'l Flight - training/verification use
+	# Note: All US Airport Designators begin with the letter K per the FAA
 	df['Intl'] = df['To'].astype(str).str[0] != 'K'
-
-
-
+	df['Intl'] = np.logical_or(df['Intl'].astype(bool), df['From'].astype(str).str[0] != 'K')
 
 	###############################################
 	#Limit results to near JFK Int'l Airport
@@ -123,12 +125,12 @@ def preprocessing(df):
 		'PosTime',
 		'DateTime',
 		'Lat',
-		'Long'
+		'Long',
+		'Year'
 	]
 
 	for attribute in bad_attributes:
 		del df[attribute]
-
 	return df
 
 def main():
@@ -136,6 +138,7 @@ def main():
 	df = preprocessing(df)
 
 	print(df.to_string()) #If receive encoding error enter for windows $ chcp 65001
+	"""
 	json_out = df.to_json()
 	csv_out = df.to_csv()
 	json_out_file = open("test_out.json", "w")
@@ -144,6 +147,7 @@ def main():
 	csv_out_file = open("test_out.csv", "w")
 	csv_out_file.write(csv_out)
 	csv_out_file.close()
+	"""
 	print("Resultant Data Set Contains " + str(df.shape[0]) + " Records...")
 	print("Done.")
 
