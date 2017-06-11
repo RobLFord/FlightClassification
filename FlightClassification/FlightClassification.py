@@ -28,7 +28,7 @@ def create_df():
 
 	useFile = True
 	if useFile:
-		filename = '2016-06-20-0000Z.json'
+		filename = '2017-05-29-0000Z.json'
 		f= open(filename, 'r', encoding="utf8")
 		objects = ijson.items(f, 'acList.item')
 	#else:
@@ -58,14 +58,15 @@ def create_df():
 def preprocessing(df):
 	#check to make sure there are not duplicate Ids
 
-	Ids_dup = df.duplicated('Id')
+	"""Ids_dup = df.duplicated('Id')
 	for IDs in Ids_dup:
 		if IDs:
 			print('There are some duplicates in Id')
 			error = True
 		else:
 			error = False
-
+	"""
+	error = False
 	if not error:
 		#See if there are any missing values
 		# print(pd.isnull(df[:30]))
@@ -96,11 +97,13 @@ def preprocessing(df):
 		df.loc[LESSTHAN_0,'Alt'] = None
 		
 		#Replace the some of missing values with average of column
+		"""
 		df.Spd = df.Spd.fillna(df.Spd.mean().round())
 		df.Alt = df.Alt.fillna(df.Alt.mean())
 		df.Alt = df.Alt.round()
 		df.TSecs = df.TSecs.fillna(df.TSecs.mean())
 		df.TSecs = df.TSecs.round()
+		"""
 
 		#Limit results to near JFK Int'l Airport
 		#JFK Latitude: 40.644623
@@ -149,6 +152,7 @@ if __name__ == '__main__':
 		csv_out_file = open("test_out.csv", "w")
 		csv_out_file.write(csv_out)
 		csv_out_file.close()
+		print("Resultant Data Set Contains " + str(df.shape[0]) + " Records...")
 		print("Done.")
 		
 		# ------------------- This Section had not been tested yet ------------------------#
