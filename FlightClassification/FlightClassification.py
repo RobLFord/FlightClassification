@@ -92,6 +92,13 @@ def preprocessing(df):
 	# Threshold: 400 knots
 	df['CruisingSpd'] = df['Spd'] > 400.
 
+	#Altitude Categorization
+	#High = 30,000ft+
+	#Medium = 10,000ft - 30,000ft
+	#Low = Below 10,000ft
+	df['AltCat'] = pd.cut(df['Alt'], bins=[0., 10000., 30000.,100000.], include_lowest=True, labels=['low','med','high'])
+
+
 	# Create boolean field for whether Int'l Flight - training/verification use
 	# Note: All US Airport Designators begin with the letter K per the FAA
 	df['Intl'] = df['To'].astype(str).str[0] != 'K'
