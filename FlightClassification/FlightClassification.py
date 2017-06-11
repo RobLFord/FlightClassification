@@ -10,7 +10,6 @@ def create_df():
 		'Spd',
 		'Op',
 		'OpIcao',
-		'CNum',
 		'Year',
 		'Gnd',
 		'Alt',
@@ -88,6 +87,10 @@ def preprocessing(df):
 	# Extract Fields from Epoch Time
 	df['DateTime'] = pd.to_datetime(df['PosTime'], unit='ms')
 	df['Weekday'] = df['DateTime'].dt.dayofweek
+
+	# Cruising Speed Categorization
+	# Threshold: 400 knots
+	df['CruisingSpd'] = df['Spd'] > 400.
 
 	# Create boolean field for whether Int'l Flight - training/verification use
 	# Note: All US Airport Designators begin with the letter K per the FAA
