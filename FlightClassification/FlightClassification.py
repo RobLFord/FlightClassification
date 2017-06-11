@@ -22,11 +22,11 @@ def create_df():
 		'Species',
 		'Mil',
 		'Lat',
-		'Long'
+		'Long',
+		'PosTime'
 	]
 
 	useFile = True
-	
 	if useFile:
 		filename = '2016-06-20-0000Z.json'
 		f= open(filename, 'r', encoding="utf8")
@@ -40,7 +40,6 @@ def create_df():
 	#Parsing json for Flights only
 	flights = (o for o in objects if o['Species'] == 1) #filter on ground aircraft
 	flights = (o for o in flights if o['Mil'] == False) #only look at civilian aviation
-	# flights = (o for o in flights if o['Gnd'] == False)
 	
 	#Parsing data based on attributes we want to use
 	data = []
@@ -48,13 +47,13 @@ def create_df():
 		row = []
 		for attribute in good_attributes:
 			row.append(flight.get(attribute))
-
 		data.append(row)
 
 	# Creating DataFrame
 	flight_DF = pd.DataFrame(data, columns=good_attributes)
-	
 	return flight_DF
+
+
 	
 def preprocessing(df):
 	#check to make sure there are not duplicate Ids
@@ -67,7 +66,6 @@ def preprocessing(df):
 		else:
 			error = False
 
-
 	if not error:
 		#See if there are any missing values
 		# print(pd.isnull(df[:30]))
@@ -79,6 +77,12 @@ def preprocessing(df):
 		#Remove flights without GPS information
 		no_gps = df[pd.isnull(df['Lat'])].index.tolist()
 		df = df.drop(no_gps)
+
+		#Remove flights without Destination Information
+		#WARNING: only for training set pre-process
+		#Not sure if this is the final strategy or need to utilize 3rd party destination source
+		no_dest = df[pd.isnull(df['To'])].index.tolist()
+		df = df.drop(no_dest)
 		
 		# Changing target classifier to have International and Domestic Fields
 		US = df.Cou == 'United States'
@@ -118,16 +122,13 @@ def preprocessing(df):
 		outside_longitude_bounds = df[df['Long'] < -74.7571].index.tolist()
 		outside_longitude_bounds += df[df['Long'] > -72.8112].index.tolist()
 		df = df.drop(outside_longitude_bounds)
-
 				
 		bad_attributes = [
 			'Id',
-			'From',
-			'To',
 			'Gnd',
 			'Species',
 			'Mil',
-			]
+		]
 			
 		for attribute in bad_attributes:
 			del df[attribute]
@@ -140,6 +141,14 @@ if __name__ == '__main__':
 	
 	if not error:
 		print(df.to_string()) #If receive encoding error enter for windows $ chcp 65001
+		json_out = df.to_json()
+		csv_out = df.to_csv()
+		json_out_file = open("test_out.json", "w")
+		json_out_file.write(json_out)
+		json_out_file.close()
+		csv_out_file = open("test_out.csv", "w")
+		csv_out_file.write(csv_out)
+		csv_out_file.close()
 		print("Done.")
 		
 		# ------------------- This Section had not been tested yet ------------------------#
