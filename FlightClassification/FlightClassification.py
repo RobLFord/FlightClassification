@@ -27,7 +27,7 @@ def create_df():
 
 	useFile = True
 	if useFile:
-		filename = '2016-06-20-0000Z.json'
+		filename = '2017-05-29-0000Z.json'
 		f= open(filename, 'r', encoding="utf8")
 		objects = ijson.items(f, 'acList.item')
 	#else:
@@ -136,7 +136,12 @@ def preprocessing(df):
 		'DateTime',
 		'Lat',
 		'Long',
-		'Year'
+		'Year',
+		'Alt',
+		'Spd',
+		'Op',
+		'OpIcao',
+		'TSecs'
 	]
 
 	for attribute in bad_attributes:
@@ -160,6 +165,8 @@ def main():
 	"""
 	print("Resultant Data Set Contains " + str(df.shape[0]) + " Records...")
 	print("Done.")
+
+
 
 	# ------------------- This Section had not been tested yet ------------------------#
 	# from sklearn.cross_validation import train_test_split
