@@ -27,3 +27,7 @@ From   - The code and name of the departure airport
 Mil    - True if the aircraft appears to be operated by the military. Based on certain range of ICAO hex codes that the aircraft broadcasts.
 
 https://www.adsbexchange.com/datafields/
+
+
+# Link to downlink flights within 50 miles of JFK
+http://public-api.adsbexchange.com/VirtualRadar/AircraftList.json?lat=40.644623&lng=-73.784180&fDstL=0&fDstU=80

@@ -2,9 +2,11 @@
 import numpy as np
 import pandas as pd
 import ijson
+import os
+
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
-def create_df():
+def create_df(path):
 	good_attributes = [
 		'Id',
 		'Man',
@@ -26,26 +28,32 @@ def create_df():
 		'PosTime'
 	]
 
-	useFile = True
-	if useFile:
-		filename = '2016-06-20-0000Z.json'
-		f= open(filename, 'r', encoding="utf8")
-		objects = ijson.items(f, 'acList.item')
-
-	#Parsing json for Flights only
-	flights = (o for o in objects if o['Species'] == 1) #filter on ground aircraft
-	flights = (o for o in flights if o['Mil'] == False) #only look at civilian aviation
-	
-	#Parsing data based on attributes we want to use
+	file_number = 0
 	data = []
-	for flight in flights:
-		row = []
-		for attribute in good_attributes:
-			row.append(flight.get(attribute))
-		data.append(row)
-
+	for filename in os.listdir(path):
+		file_number += 1
+		filepath = os.path.join(path, filename)
+		print('Grabbing data from : '  + filepath)
+		
+		f= open(filepath, 'r', encoding="utf8")
+		objects = ijson.items(f, 'acList.item')
+		
+		#Parsing json for Flights only
+		flights = (o for o in objects if o['Species'] == 1) #filter on ground aircraft
+		flights = (o for o in flights if o['Mil'] == False) #only look at civilian aviation
+		
+		#Parsing data based on attributes we want to use
+		for flight in flights:
+			row = []
+			for attribute in good_attributes:
+				row.append(flight.get(attribute))
+			data.append(row)
+			
+	print('Total number of files read : ' + str(file_number))
+	
 	# Creating DataFrame
 	flight_DF = pd.DataFrame(data, columns=good_attributes)
+	print('Total number of records ' + str(flight_DF.shape[0]))
 	return flight_DF
 
 def preprocessing(df):
@@ -153,7 +161,9 @@ def write_dot(tree, feature_names):
                         feature_names=feature_names)
 
 def main():
-	df = create_df()
+	path = '.\\2016-06-20'
+
+	df = create_df(path)
 	df = preprocessing(df)
 
 	output_json_csv = False
