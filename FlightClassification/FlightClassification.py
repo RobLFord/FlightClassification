@@ -2,10 +2,7 @@
 import numpy as np
 import pandas as pd
 import ijson
-import os
-import subprocess
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
-from sklearn.preprocessing import LabelEncoder
 
 def create_df():
 	good_attributes = [
@@ -34,11 +31,6 @@ def create_df():
 		filename = '2016-06-20-0000Z.json'
 		f= open(filename, 'r', encoding="utf8")
 		objects = ijson.items(f, 'acList.item')
-	#else:
-		# Has not been tested yet
-		# import urllib.request, json
-		# with urllib.request.urlopen("https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json") as url:
-			# objects = json.loads(url.read().decode())
 
 	#Parsing json for Flights only
 	flights = (o for o in objects if o['Species'] == 1) #filter on ground aircraft
@@ -156,13 +148,6 @@ def preprocessing(df):
 	return df
 
 def write_dot(tree, feature_names):
-    """Create tree dot file for graphviz.
-
-    Args
-    ----
-    tree -- scikit-learn DecsisionTree.
-    feature_names -- list of feature names.
-    """
     with open("dt.dot", 'w') as f:
         export_graphviz(tree, out_file=f,
                         feature_names=feature_names)
@@ -171,16 +156,17 @@ def main():
 	df = create_df()
 	df = preprocessing(df)
 
-	"""
-	json_out = df.to_json()
-	csv_out = df.to_csv()
-	json_out_file = open("test_out.json", "w")
-	json_out_file.write(json_out)
-	json_out_file.close()
-	csv_out_file = open("test_out.csv", "w")
-	csv_out_file.write(csv_out)
-	csv_out_file.close()
-	"""
+	output_json_csv = False
+	if(output_json_csv):
+		json_out = df.to_json()
+		csv_out = df.to_csv()
+		json_out_file = open("out.json", "w")
+		json_out_file.write(json_out)
+		json_out_file.close()
+		csv_out_file = open("out.csv", "w")
+		csv_out_file.write(csv_out)
+		csv_out_file.close()
+
 	print(df)
 	print("Resultant Data Set Contains " + str(df.shape[0]) + " Records...")
 	print("Done.")
@@ -194,39 +180,10 @@ def main():
 	y = df['Intl']
 	x = df[features]
 
-	clfr = DecisionTreeClassifier(min_samples_split=1, random_state=99)
+	clfr = DecisionTreeClassifier(min_samples_split=2, random_state=99)
 	clfr.fit(x,y)
 
 	write_dot(clfr, features)
-
-
-
-	# ------------------- This Section had not been tested yet ------------------------#
-	# from sklearn.cross_validation import train_test_split
-	# from sklearn.tree import DecisionTreeClassifier
-	# from sklearn.metrics import accuracy_score
-	# from sklearn import tree
-	# X_train, X_test, y_train, y_test = train_test_split( X, Y, test_size = 0.3, random_state = 100)
-
-	# clf_gini = DecisionTreeClassifier(criterion = "gini", random_state = 100,
-									# max_depth=3, min_samples_leaf=5)
-
-	# clf_gini.fit(X_train, y_train)
-
-	# clf_entropy = DecisionTreeClassifier(criterion = "entropy", random_state = 100,
-									# max_depth=3, min_samples_leaf=5)
-
-	# clf_entropy.fit(X_train, y_train)
-
-	# y_pred = clf_gini.predict(X_test)
-
-	# y_pred_en = clf_entropy.predict(X_test)
-
-	# print("Accuracy of Gini ", accuracy_score(y_test,y_pred)*100)
-
-	# print("Accuracy of Entropy ", accuracy_score(y_test,y_pred_en)*100)
-
-	#----------------------------------------------------------------------------------#
 
 if __name__ == '__main__':
 	main()
