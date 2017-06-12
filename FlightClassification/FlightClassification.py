@@ -2,6 +2,10 @@
 import numpy as np
 import pandas as pd
 import ijson
+import os
+import subprocess
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.preprocessing import LabelEncoder
 
 def create_df():
 	good_attributes = [
@@ -27,7 +31,7 @@ def create_df():
 
 	useFile = True
 	if useFile:
-		filename = '2017-05-29-0000Z.json'
+		filename = '2016-06-20-0000Z.json'
 		f= open(filename, 'r', encoding="utf8")
 		objects = ijson.items(f, 'acList.item')
 	#else:
@@ -72,8 +76,8 @@ def preprocessing(df):
 	US = df.Cou == 'United States'
 	NONUS = df.Cou != 'United States'
 
-	df.loc[US,'Cou'] = 'Domestic'
-	df.loc[NONUS,'Cou'] = 'International'
+	df.loc[US,'Cou'] = 0 # 0 = Domestic
+	df.loc[NONUS,'Cou'] = 1 #1 = International
 
 	# Boolean for whether the flight is a major US carrier
 	us_icaos = ["JBU", "AAL", "DAL", "UAL", "ASA", "AAY", "FFT", "HAL", "SWA", "NKS", "VRD", "ENY", "ASQ", "SKW"]
@@ -82,7 +86,7 @@ def preprocessing(df):
 
 	# Fixing values with negative values
 	LESSTHAN_0 = df.Alt < 0
-	df.loc[LESSTHAN_0,'Alt'] = None
+	df.loc[LESSTHAN_0,'Alt'] = 0
 
 	# Extract Fields from Epoch Time
 	df['DateTime'] = pd.to_datetime(df['PosTime'], unit='ms')
@@ -96,8 +100,7 @@ def preprocessing(df):
 	#High = 30,000ft+
 	#Medium = 10,000ft - 30,000ft
 	#Low = Below 10,000ft
-	df['AltCat'] = pd.cut(df['Alt'], bins=[0., 10000., 30000.,100000.], include_lowest=True, labels=['low','med','high'])
-
+	df['AltCat'] = pd.cut(df['Alt'], bins=[0., 10000., 30000.,100000.], include_lowest=True, labels=[int(0),int(1),int(2)])
 
 	# Create boolean field for whether Int'l Flight - training/verification use
 	# Note: All US Airport Designators begin with the letter K per the FAA
@@ -141,18 +144,33 @@ def preprocessing(df):
 		'Spd',
 		'Op',
 		'OpIcao',
-		'TSecs'
+		'TSecs',
+		'To',
+		'From',
+		'Type',
+		'Man'
 	]
 
 	for attribute in bad_attributes:
 		del df[attribute]
 	return df
 
+def write_dot(tree, feature_names):
+    """Create tree dot file for graphviz.
+
+    Args
+    ----
+    tree -- scikit-learn DecsisionTree.
+    feature_names -- list of feature names.
+    """
+    with open("dt.dot", 'w') as f:
+        export_graphviz(tree, out_file=f,
+                        feature_names=feature_names)
+
 def main():
 	df = create_df()
 	df = preprocessing(df)
 
-	print(df.to_string()) #If receive encoding error enter for windows $ chcp 65001
 	"""
 	json_out = df.to_json()
 	csv_out = df.to_csv()
@@ -163,8 +181,23 @@ def main():
 	csv_out_file.write(csv_out)
 	csv_out_file.close()
 	"""
+	print(df)
 	print("Resultant Data Set Contains " + str(df.shape[0]) + " Records...")
 	print("Done.")
+
+
+	features = list(df.columns[:5])
+	print(" Features: ", features, sep='\n')
+	target = df.columns[5]
+	print(" Target: ", target,sep='\n')
+
+	y = df['Intl']
+	x = df[features]
+
+	clfr = DecisionTreeClassifier(min_samples_split=1, random_state=99)
+	clfr.fit(x,y)
+
+	write_dot(clfr, features)
 
 
 
