@@ -203,10 +203,10 @@ def main():
 
 	#Automatically split into training and test, then run classification and output accuracy numbers
 	X_train, X_test, y_train, y_test = train_test_split( x, y, test_size = 0.3, random_state = 100)
-	clf_gini = DecisionTreeClassifier(criterion = "gini", min_samples_leaf=2)
+	clf_gini = DecisionTreeClassifier(criterion = "gini", min_samples_leaf=5)
 
 	clf_gini.fit(X_train, y_train)
-	clf_entropy = DecisionTreeClassifier(criterion = "entropy",  min_samples_leaf=2)
+	clf_entropy = DecisionTreeClassifier(criterion = "entropy",  min_samples_leaf=5)
 	clf_entropy.fit(X_train, y_train)
 
 	y_pred = clf_gini.predict(X_test)
@@ -214,6 +214,9 @@ def main():
 
 	print("Accuracy of Gini ", accuracy_score(y_test,y_pred)*100)
 	print("Accuracy of Entropy ", accuracy_score(y_test,y_pred_en)*100)
+
+	print("Gini Score: ", clf_gini.score(x,y))
+	print("Entropy Score: ", clf_entropy.score(x, y))
 
 	write_dot(clf_gini, features, "gini.dot")
 	write_dot(clf_entropy, features, "entropy.dot")
