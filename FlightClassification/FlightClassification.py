@@ -3,8 +3,10 @@ import numpy as np
 import pandas as pd
 import ijson
 import os
-
+from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.metrics import accuracy_score
+import time
 
 def create_df(path):
 	good_attributes = [
@@ -55,6 +57,14 @@ def create_df(path):
 	flight_DF = pd.DataFrame(data, columns=good_attributes)
 	print('Total number of records ' + str(flight_DF.shape[0]))
 	return flight_DF
+
+def output_raw_csv(df):
+	filename = "raw_df_" + time.strftime("%b%d%Y_%H_%M_%S", time.localtime()) + ".csv"
+	csv_out = df.to_csv(encoding='utf-8')
+	csv_out_file = open(filename, "w",encoding='utf-8')
+	csv_out_file.write(csv_out)
+	csv_out_file.close()
+
 
 def preprocessing(df):
 
@@ -155,15 +165,16 @@ def preprocessing(df):
 		del df[attribute]
 	return df
 
-def write_dot(tree, feature_names):
-    with open("dt.dot", 'w') as f:
+def write_dot(tree, feature_names, filename):
+    with open(filename, 'w') as f:
         export_graphviz(tree, out_file=f,
                         feature_names=feature_names)
 
 def main():
-	path = '.\\2016-06-20'
+	path = '.\\Data'
 
 	df = create_df(path)
+	output_raw_csv(df)
 	df = preprocessing(df)
 
 	output_json_csv = False
@@ -190,10 +201,22 @@ def main():
 	y = df['Intl']
 	x = df[features]
 
-	clfr = DecisionTreeClassifier(min_samples_split=2, random_state=99)
-	clfr.fit(x,y)
+	#Automatically split into training and test, then run classification and output accuracy numbers
+	X_train, X_test, y_train, y_test = train_test_split( x, y, test_size = 0.3, random_state = 100)
+	clf_gini = DecisionTreeClassifier(criterion = "gini", min_samples_leaf=2)
 
-	write_dot(clfr, features)
+	clf_gini.fit(X_train, y_train)
+	clf_entropy = DecisionTreeClassifier(criterion = "entropy",  min_samples_leaf=2)
+	clf_entropy.fit(X_train, y_train)
+
+	y_pred = clf_gini.predict(X_test)
+	y_pred_en = clf_entropy.predict(X_test)
+
+	print("Accuracy of Gini ", accuracy_score(y_test,y_pred)*100)
+	print("Accuracy of Entropy ", accuracy_score(y_test,y_pred_en)*100)
+
+	write_dot(clf_gini, features, "gini.dot")
+	write_dot(clf_entropy, features, "entropy.dot")
 
 if __name__ == '__main__':
 	main()
