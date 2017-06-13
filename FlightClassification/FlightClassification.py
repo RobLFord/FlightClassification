@@ -104,7 +104,7 @@ def preprocessing(df):
 
 	# Cruising Speed Categorization
 	# Threshold: 400 knots
-	df['CruisingSpd'] = df['Spd'] > 400.
+	df['CruisingSpd'] = df['Spd'] > 375.
 
 	#Altitude Categorization
 	#High = 30,000ft+
