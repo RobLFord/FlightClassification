@@ -110,7 +110,7 @@ def preprocessing(df):
 	#High = 30,000ft+
 	#Medium = 10,000ft - 30,000ft
 	#Low = Below 10,000ft
-	df['AltCat'] = pd.cut(df['Alt'], bins=[0., 10000., 30000.,100000.], include_lowest=True, labels=[int(0),int(1),int(2)])
+	df['AltCat'] = pd.cut(df['Alt'], bins=[0., 10000., 29000.,100000.], include_lowest=True, labels=[int(0),int(1),int(2)])
 
 	# Create boolean field for whether Int'l Flight - training/verification use
 	# Note: All US Airport Designators begin with the letter K per the FAA
@@ -171,7 +171,7 @@ def write_dot(tree, feature_names, filename):
                         feature_names=feature_names)
 
 def main():
-	path = '.\\Data'
+	path = '.\\Data_Weekdays'
 
 	df = create_df(path)
 	output_raw_csv(df)
