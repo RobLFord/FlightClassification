@@ -1,0 +1,33 @@
+Filter JSON file by
+
+Species - 1 = Aircraft
+
+Target Attribute
+
+Domestic - US
+International - NON US
+
+Cou    - The country that the aircraft is registered to
+
+Attributes
+
+Id     - The unique identifier of the aircraft
+Man    - The manufacturers's
+Spd    - The ground speed in knots
+Op     - The name of the aircraft's operator
+OpIcao - The operator's ICAO code
+CNum   - The aircraft's construction or serial number
+Year   - The year that the aircraft was manufactured
+Gnd    - True if the aircraft is on the ground
+Alt    - The altitude in feet at standard pressure
+TSecs  - The number of seconds that the aircraft has been tracked for
+Type   - The aircraft model's ICAO type code
+To     - The code and name of the arrival airport
+From   - The code and name of the departure airport
+Mil    - True if the aircraft appears to be operated by the military. Based on certain range of ICAO hex codes that the aircraft broadcasts.
+
+https://www.adsbexchange.com/datafields/
+
+
+# Link to downlink flights within 50 miles of JFK
+http://public-api.adsbexchange.com/VirtualRadar/AircraftList.json?lat=40.644623&lng=-73.784180&fDstL=0&fDstU=80
