@@ -8,6 +8,7 @@ from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 import time
+import sys
 
 def create_df(path):
 	good_attributes = [
@@ -60,7 +61,8 @@ def create_df(path):
 	return flight_DF
 
 def output_raw_csv(df):
-	filename = "raw_df_" + time.strftime("%b%d%Y_%H_%M_%S", time.localtime()) + ".csv"
+	# filename = "raw_df_" + time.strftime("%b%d%Y_%H_%M_%S", time.localtime()) + ".csv"
+	filename = "raw_df.csv"
 	csv_out = df.to_csv(encoding='utf-8')
 	csv_out_file = open(filename, "w",encoding='utf-8')
 	csv_out_file.write(csv_out)
@@ -167,18 +169,12 @@ def preprocessing(df):
 	return df
 
 def write_dot(tree, feature_names, filename):
-    with open(filename, 'w') as f:
-        export_graphviz(tree, out_file=f,
-                        feature_names=feature_names)
-
-def main():
-	path = '.\\Data'
-
-	df = create_df(path)
-	output_raw_csv(df)
-	df = preprocessing(df)
-
-	output_json_csv = False
+	with open(filename, 'w') as f:
+		export_graphviz(tree, out_file=f,
+						feature_names=feature_names)
+						
+						
+def write_json_csv(output_json_csv):
 	if(output_json_csv):
 		json_out = df.to_json()
 		csv_out = df.to_csv()
@@ -188,11 +184,37 @@ def main():
 		csv_out_file = open("out.csv", "w")
 		csv_out_file.write(csv_out)
 		csv_out_file.close()
+		
+def decisionTree(X_train, X_test, y_train, y_test, features):
+	clf_gini = DecisionTreeClassifier(criterion = "gini", min_samples_leaf=5)
+	clf_gini.fit(X_train, y_train)
+	y_pred = clf_gini.predict(X_test)
+	print("Accuracy of Gini ", accuracy_score(y_test,y_pred)*100)
+	write_dot(clf_gini, features, "gini.dot")
+	
+def naiveBayes(X_train, X_test, y_train, y_test):
+	clf_naive = GaussianNB()
+	clf_naive.fit(X_train, y_train)
+	y_pred_na = clf_naive.predict(X_test)
+	print("Accuracy of Naive Bayes ", accuracy_score(y_test,y_pred_na)*100)
+
+def main():
+	path = '.\\Data'
+
+	if(len(sys.argv) > 1):
+		if(sys.argv[1] == 'new_data'):
+			df = create_df(path)
+			output_raw_csv(df)
+	else:
+		df = pd.read_csv('raw_df.csv')
+		
+	df = preprocessing(df)
+
+	write_json_csv(False)
 
 	print(df)
 	print("Resultant Data Set Contains " + str(df.shape[0]) + " Records...")
 	print("Done.")
-
 
 	features = list(df.columns[:5])
 	print(" Features: ", features, sep='\n')
@@ -204,20 +226,8 @@ def main():
 
 	#Automatically split into training and test, then run classification and output accuracy numbers
 	X_train, X_test, y_train, y_test = train_test_split( x, y, test_size = 0.3, random_state = 100)
-	
-	clf_gini = DecisionTreeClassifier(criterion = "gini", min_samples_leaf=5)
-	clf_gini.fit(X_train, y_train)
-	
-	clf_naive = GaussianNB()
-	clf_naive.fit(X_train, y_train)
-
-	y_pred = clf_gini.predict(X_test)
-	y_pred_na = clf_naive.predict(X_test)
-
-	print("Accuracy of Gini ", accuracy_score(y_test,y_pred)*100)
-	print("Accuracy of Naive Bayes ", accuracy_score(y_test,y_pred_na)*100)
-
-	write_dot(clf_gini, features, "gini.dot")
+	decisionTree(X_train, X_test, y_train, y_test, features)
+	naiveBayes(X_train, X_test, y_train, y_test)
 
 if __name__ == '__main__':
 	main()
