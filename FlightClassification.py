@@ -90,11 +90,11 @@ def preprocessing(df):
 	US = df.Cou == 'United States'
 	NONUS = df.Cou != 'United States'
 
-	df.loc[US,'Cou'] = 0 # 0 = Domestic
-	df.loc[NONUS,'Cou'] = 1 #1 = International
+	df.loc[US,'Cou'] = False # 0 = Domestic
+	df.loc[NONUS,'Cou'] = True #1 = International
 
 	# Boolean for whether the flight is a major US carrier
-	us_icaos = ["JBU", "AAL", "DAL", "UAL", "ASA", "AAY", "FFT", "HAL", "SWA", "NKS", "VRD", "ENY", "ASQ", "SKW"]
+	us_icaos = MAJORUS
 	icao_pattern = '|'.join(us_icaos)
 	df['MajorUsCarrier'] = df['OpIcao'].str.contains(icao_pattern)
 
@@ -190,18 +190,43 @@ def write_json_csv(file_type, file_name, df):
 		print('Please specify correct file type')
 		
 		
-def decisionTree(X_train, X_test, y_train, y_test, features):
-	clf_gini = DecisionTreeClassifier(criterion = "gini", min_samples_leaf=5)
+def decisionTree(X_train,
+				X_test,
+				y_train,
+				y_test,
+				features,
+				max_depth,
+				min_samples_split,
+				min_samples_leaf,
+				min_weight_fraction_leaf,
+				max_leaf_nodes,
+				file, i):
+				
+	clf_gini = DecisionTreeClassifier(criterion = "gini",
+									max_depth=max_depth,
+									min_samples_split=min_samples_split,
+									min_samples_leaf=min_samples_leaf,
+									min_weight_fraction_leaf=min_weight_fraction_leaf,
+									max_leaf_nodes=max_leaf_nodes)
+									
 	clf_gini.fit(X_train, y_train)
 	y_pred = clf_gini.predict(X_test)
 	print("Accuracy of Gini ", accuracy_score(y_test,y_pred)*100)
-	write_dot(clf_gini, features, "gini.dot")
 	
-def naiveBayes(X_train, X_test, y_train, y_test):
+	file.write("\nAccuracy of Gini " + str(accuracy_score(y_test,y_pred)*100))
+	file.flush()
+	
+	dot_file_name = ".\\Dots\\gini_model_" + str(i) + '.dot'
+	write_dot(clf_gini, features, dot_file_name)
+	
+def naiveBayes(X_train, X_test, y_train, y_test, file):
 	clf_naive = GaussianNB()
 	clf_naive.fit(X_train, y_train)
 	y_pred_na = clf_naive.predict(X_test)
 	print("Accuracy of Naive Bayes ", accuracy_score(y_test,y_pred_na)*100)
+	
+	file.write("\nAccuracy of Naive Bayes " + str(accuracy_score(y_test,y_pred_na)*100))
+	file.flush()
 	
 def data_summary(file_name, df):
 	summary_file = open(file_name, "w")
@@ -217,21 +242,153 @@ def before_preprocess_visual(df):
 	alt_scat_plot.set_xlabel("Record Number")
 	alt_scat_plot.set_ylabel("Altitude (Feet)")
 	plt.savefig('.\\Plots\\alt_scat_plot_raw.jpg')
+	plt.clf()
 	
 	alt_box_plot = raw_df.plot(kind='box', x='FlightData', y='Alt', title="Altitude ADS-B Records")
 	alt_box_plot.set_ylabel("Altitude (Feet)")
 	plt.savefig('.\\Plots\\alt_box_plot_raw.jpg')
+	plt.clf()
 	
 	spd_scat_plot = raw_df.plot(kind='scatter', x='FlightData', y='Spd', title="Speed ADS-B Records")
 	spd_scat_plot.set_xlabel("Record Number")
 	spd_scat_plot.set_ylabel("Speed (Knots)")
 	plt.savefig('.\\Plots\\spd_scat_plot_raw.jpg')
+	plt.clf()
 	
 	spd_box_plot = raw_df.plot(kind='box', x='FlightData', y='Spd', title="Speed ADS-B Records")
 	spd_box_plot.set_ylabel("Speed (Knots)")
 	plt.savefig('.\\Plots\\spd_box_plot_raw.jpg')
+	plt.clf()
 	
+	index_list = []
+	for i in MAJORUS:
+		index_list += raw_df[raw_df['OpIcao'] == i].index.tolist()
+		
+	raw_opicao_df = raw_df.loc[index_list]
+	opicao_group = raw_opicao_df.groupby('OpIcao')
+	opicao_bar_plot = opicao_group.size().plot(kind='bar',title="Major US OpIcao ADS-B Records")
+	opicao_bar_plot.set_xlabel("OpIcao")
+	opicao_bar_plot.set_ylabel("Total")
+	plt.savefig('.\\Plots\\OpIcao_bar_plot_raw.jpg')
+	plt.clf()
+	
+def after_preprocess_visual(df):
+	cou_group = df.groupby('Cou')
+	cou_bar_plot = cou_group.size().plot(kind='bar', title="U.S Country")
+	cou_bar_plot.set_xlabel("U.S Country")
+	cou_bar_plot.set_ylabel("Total")
+	plt.savefig('.\\Plots\\country_bar_plot.jpg')
+	plt.clf()
+	
+	majorCarrier_group = df.groupby('MajorUsCarrier')
+	majorCarrier_bar_plot = majorCarrier_group.size().plot(kind='bar', title="Major U.S Carrier")
+	majorCarrier_bar_plot.set_xlabel("Major U.S Carrier")
+	majorCarrier_bar_plot.set_ylabel("Total")
+	plt.savefig('.\\Plots\\MajorUsCarrier_bar_plot.jpg')
+	plt.clf()
+	
+	cruising_group = df.groupby('CruisingSpd')
+	cruising_bar_plot = cruising_group.size().plot(kind='bar', title="Cruising Speed")
+	cruising_bar_plot.set_xlabel("Cruising Speed")
+	cruising_bar_plot.set_ylabel("Total")
+	plt.savefig('.\\Plots\\cruising_bar_plot.jpg')
+	plt.clf()
+	
+	altCat_group = df.groupby('AltCat')
+	altCat_bar_plot = altCat_group.size().plot(kind='bar', title="Altitude Catagory")
+	altCat_bar_plot.set_xlabel("Altitude Catagory 0=low 1=med 2=high")
+	altCat_bar_plot.set_ylabel("Total")
+	plt.savefig('.\\Plots\\alt_cat_bar_plot.jpg')
+	plt.clf()
+	
+	international_group = df.groupby('Intl')
+	international_bar_plot = international_group.size().plot(kind='bar', title="International vs Domestic")
+	international_bar_plot.set_xlabel("International")
+	international_bar_plot.set_ylabel("Total")
+	plt.savefig('.\\Plots\\international_bar_plot.jpg')
+	plt.clf()
+	
+def make_models(df):
+	for i in range(1,6):
+		model_log_file = '.\\Logs\\Model_' + str(i) + '.txt'
+		model_log = open(model_log_file, "w")
+		print('\nModel : ', i)
+		model_log.write('Model : ' + str(i))
+		model_log.flush()
+		
+		if(i == 1):
+			max_depth = None # int
+			min_samples_split = 2
+			min_samples_leaf = 1
+			min_weight_fraction_leaf = 0 # float 
+			max_leaf_nodes = None # int
+		elif(i == 2):
+			max_depth = None # int
+			min_samples_split = 5
+			min_samples_leaf = 1
+			min_weight_fraction_leaf = 0 # float 
+			max_leaf_nodes = None # int
+		elif(i == 3):
+			max_depth = None # int
+			min_samples_split = 5
+			min_samples_leaf = 2
+			min_weight_fraction_leaf = 0 # float 
+			max_leaf_nodes = None # int
+		elif(i == 4):
+			max_depth = None # int
+			min_samples_split = 5
+			min_samples_leaf = 2
+			min_weight_fraction_leaf = 0.5 # float 
+			max_leaf_nodes = None # int
+		elif(i == 5):
+			max_depth = 2 # int
+			min_samples_split = 5
+			min_samples_leaf = 2
+			min_weight_fraction_leaf = 0 # float 
+			max_leaf_nodes = None # int
+			
+		file_name = '.\\Dataframes\\Model_' + str(i) + '.csv'
+		write_json_csv('csv', file_name, df)
 
+		print("Resultant Data Set Contains " + str(df.shape[0]) + " Records...")
+		model_log.write("\nResultant Data Set Contains " + str(df.shape[0]) + " Records...")
+		model_log.flush()
+		
+		features = list(df.columns[:5])
+		print("Features: ", features)
+		
+		model_log.write("\nFeatures: ")
+		model_log.flush()
+		
+		for item in features:
+			model_log.write(item + ", ")
+			model_log.flush()
+		
+		target = df.columns[5]
+		print("Target: ", target)
+		model_log.write("\nTarget: " + target)
+		model_log.flush()
+
+		y = df['Intl']
+		x = df[features]
+
+		#Automatically split into training and test, then run classification and output accuracy numbers
+		X_train, X_test, y_train, y_test = train_test_split( x, y, test_size = 0.3, random_state = 100)
+		decisionTree(X_train,
+					X_test,
+					y_train,
+					y_test,
+					features,
+					max_depth,
+					min_samples_split,
+					min_samples_leaf,
+					min_weight_fraction_leaf,
+					max_leaf_nodes,
+					model_log, i)
+		naiveBayes(X_train, X_test, y_train, y_test, model_log)
+		
+		model_log.close()
+		
 def main():
 	path = '.\\Data'
 
@@ -255,25 +412,10 @@ def main():
 	df = preprocessing(df)
 	
 	# Visualization after proprocessing
-
-	write_json_csv('csv', 'df_0.csv', df)
-
-	print(df)
-	print("Resultant Data Set Contains " + str(df.shape[0]) + " Records...")
-	print("Done.")
-
-	features = list(df.columns[:5])
-	print(" Features: ", features, sep='\n')
-	target = df.columns[5]
-	print(" Target: ", target,sep='\n')
-
-	y = df['Intl']
-	x = df[features]
-
-	#Automatically split into training and test, then run classification and output accuracy numbers
-	X_train, X_test, y_train, y_test = train_test_split( x, y, test_size = 0.3, random_state = 100)
-	decisionTree(X_train, X_test, y_train, y_test, features)
-	naiveBayes(X_train, X_test, y_train, y_test)
+	after_preprocess_visual(df)
+	
+	make_models(df)
 
 if __name__ == '__main__':
+	MAJORUS = ["JBU", "AAL", "DAL", "UAL", "ASA", "AAY", "FFT", "HAL", "SWA", "NKS", "VRD", "ENY", "ASQ", "SKW"]
 	main()
