@@ -9,6 +9,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 import time
 import sys
+import matplotlib.pyplot as plt
 
 def create_df(path):
 	good_attributes = [
@@ -174,16 +175,20 @@ def write_dot(tree, feature_names, filename):
 						feature_names=feature_names)
 						
 						
-def write_json_csv(output_json_csv):
-	if(output_json_csv):
+def write_json_csv(file_type, file_name, df):
+	if(file_type == 'json'):
 		json_out = df.to_json()
-		csv_out = df.to_csv()
-		json_out_file = open("out.json", "w")
+		json_out_file = open(file_name, "w")
 		json_out_file.write(json_out)
 		json_out_file.close()
-		csv_out_file = open("out.csv", "w")
+	elif(file_type == 'csv'):
+		csv_out = df.to_csv()
+		csv_out_file = open(file_name, "w")
 		csv_out_file.write(csv_out)
 		csv_out_file.close()
+	else:
+		print('Please specify correct file type')
+		
 		
 def decisionTree(X_train, X_test, y_train, y_test, features):
 	clf_gini = DecisionTreeClassifier(criterion = "gini", min_samples_leaf=5)
@@ -197,6 +202,35 @@ def naiveBayes(X_train, X_test, y_train, y_test):
 	clf_naive.fit(X_train, y_train)
 	y_pred_na = clf_naive.predict(X_test)
 	print("Accuracy of Naive Bayes ", accuracy_score(y_test,y_pred_na)*100)
+	
+def data_summary(file_name, df):
+	summary_file = open(file_name, "w")
+	summary_file.write(str(df.describe()))
+	summary_file.close()
+	
+def before_preprocess_visual(df):
+	pd.options.mode.chained_assignment = None
+	raw_df = df[['Alt', 'Spd','OpIcao']]
+	raw_df['FlightData'] = raw_df['Alt'].index.tolist()
+	
+	alt_scat_plot = raw_df.plot(kind='scatter', x='FlightData', y='Alt', title="Altitude ADS-B Records")
+	alt_scat_plot.set_xlabel("Record Number")
+	alt_scat_plot.set_ylabel("Altitude (Feet)")
+	plt.savefig('.\\Plots\\alt_scat_plot_raw.jpg')
+	
+	alt_box_plot = raw_df.plot(kind='box', x='FlightData', y='Alt', title="Altitude ADS-B Records")
+	alt_box_plot.set_ylabel("Altitude (Feet)")
+	plt.savefig('.\\Plots\\alt_box_plot_raw.jpg')
+	
+	spd_scat_plot = raw_df.plot(kind='scatter', x='FlightData', y='Spd', title="Speed ADS-B Records")
+	spd_scat_plot.set_xlabel("Record Number")
+	spd_scat_plot.set_ylabel("Speed (Knots)")
+	plt.savefig('.\\Plots\\spd_scat_plot_raw.jpg')
+	
+	spd_box_plot = raw_df.plot(kind='box', x='FlightData', y='Spd', title="Speed ADS-B Records")
+	spd_box_plot.set_ylabel("Speed (Knots)")
+	plt.savefig('.\\Plots\\spd_box_plot_raw.jpg')
+	
 
 def main():
 	path = '.\\Data'
@@ -208,9 +242,20 @@ def main():
 	else:
 		df = pd.read_csv('raw_df.csv')
 		
-	df = preprocessing(df)
+	
+	# Summary of data
+	print_summary = True
+	if(print_summary):
+		data_summary('raw_data_summary.txt', df)
+	
+	# Visualiztion before preprocessing data
+	before_preprocess_visual(df)
 
-	write_json_csv(False)
+	df = preprocessing(df)
+	
+	# Visualization after proprocessing
+
+	write_json_csv('csv', 'df_0.csv', df)
 
 	print(df)
 	print("Resultant Data Set Contains " + str(df.shape[0]) + " Records...")
