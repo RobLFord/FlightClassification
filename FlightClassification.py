@@ -237,8 +237,9 @@ def main():
 
 	if(len(sys.argv) > 1):
 		if(sys.argv[1] == 'new_data'):
-			df = create_df(path)
-			output_raw_csv(df)
+			df_json = create_df(path)
+			output_raw_csv(df_json)
+			df = pd.read_csv('raw_df.csv')
 	else:
 		df = pd.read_csv('raw_df.csv')
 		
