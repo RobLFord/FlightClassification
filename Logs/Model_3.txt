@@ -1,6 +1,6 @@
 Model : 3
-Resultant Data Set Contains 310 Records...
+Resultant Data Set Contains 1176 Records...
 Features: Unnamed: 0, Cou, MajorUsCarrier, Weekday, CruisingSpd, 
 Target: AltCat
-Accuracy of Gini 87.0967741935
-Accuracy of Naive Bayes 87.0967741935
+Accuracy of Gini 81.5864022663
+Accuracy of Naive Bayes 67.4220963173
