@@ -352,7 +352,7 @@ def make_models(df):
 			# Decision tree classifier parameters
 			max_depth = None # int
 			min_samples_split = 5
-			min_samples_leaf = 1
+			min_samples_leaf = 5
 			min_weight_fraction_leaf = 0 # float 
 			max_leaf_nodes = None # int
 		elif(i == 2):
@@ -361,8 +361,8 @@ def make_models(df):
 			
 			# Decision tree classifier parameters
 			# max_depth = (No change)
-			min_samples_split = 5
-			min_samples_leaf = 2 # --- changed to improve accuracy---
+			# min_samples_split = (No change)
+			min_samples_leaf = 3 # --- changed to improve accuracy---
 			# min_weight_fraction_leaf = (No change)
 			# max_leaf_nodes = (No change)
 		elif(i == 3):
@@ -371,16 +371,16 @@ def make_models(df):
 			
 			# Decision tree classifier parameters
 			# max_depth = None (No change)
-			min_samples_split = 2 # --- changed to improve accuracy---
-			min_samples_leaf = 2 # --- changed to improve accuracy---
+			# min_samples_split = (No change)
+			min_samples_leaf = 1 # --- changed to improve accuracy---
 			# min_weight_fraction_leaf = (No change)
 			# max_leaf_nodes = (No change)
 		elif(i == 4):
 			# Preprocessing parameters
 			lowAlt = 17050.
 			medAlt = 32000.
-			highAlt = 36000.
-			cruising_threshold = 375.
+			highAlt = 66000.
+			# cruising_threshold = (No change)
 			# Decision tree classifier parameters
 			# No change
 		elif(i == 5):
@@ -388,7 +388,7 @@ def make_models(df):
 			# lowAlt = (No change)
 			# medAlt = (No change)
 			# highAlt = (No change)
-			cruising_threshold = 395. # Equal to mean from before preprocess summary
+			cruising_threshold = 248.252883 # Equal to 1 std from mean from before preprocess summary
 			# Decision tree classifier parameters
 			# No change
 		elif(i == 6):
@@ -396,7 +396,7 @@ def make_models(df):
 			# lowAlt = (No change)
 			# medAlt = (No change)
 			# highAlt = (No change)
-			cruising_threshold = 427. # Equal to 50% from before preprocess summary
+			cruising_threshold = 394.646672 # Equal to mean from before preprocess summary
 			# Decision tree classifier parameters
 			# No change
 			
@@ -465,6 +465,7 @@ def main():
 		print("Reading raw data from CSV")
 		df = pd.read_csv('.\\DataFrames\\raw_df.csv')
 		
+	del df['Unnamed: 0']
 	
 	# Summary of data
 	print_summary = True
