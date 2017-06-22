@@ -81,7 +81,7 @@
 6693,6693,False,True,0,True,1.0,False
 6895,6895,False,True,0,True,2.0,False
 6959,6959,False,True,0,False,0.0,False
-7489,7489,False,True,0,True,1.0,False
+7489,7489,False,True,0,False,1.0,False
 7518,7518,False,True,0,False,1.0,False
 7573,7573,False,True,0,False,1.0,False
 7612,7612,False,True,0,False,1.0,True
@@ -142,7 +142,7 @@
 14342,14342,False,True,0,False,0.0,False
 14443,14443,False,True,0,True,1.0,False
 14675,14675,False,True,0,False,0.0,False
-15121,15121,False,True,0,True,1.0,False
+15121,15121,False,True,0,False,1.0,False
 15146,15146,False,True,0,False,1.0,False
 15197,15197,False,True,0,False,1.0,False
 16161,16161,False,False,0,False,0.0,False
@@ -237,7 +237,7 @@
 29108,29108,True,False,0,False,0.0,True
 29123,29123,False,True,0,False,0.0,True
 29272,29272,False,True,0,True,1.0,False
-29274,29274,False,True,0,True,1.0,True
+29274,29274,False,True,0,False,1.0,True
 29564,29564,False,False,0,False,0.0,False
 29611,29611,False,True,0,False,0.0,False
 29780,29780,False,True,0,False,2.0,False
@@ -246,7 +246,7 @@
 31510,31510,False,False,0,False,0.0,False
 31526,31526,False,False,0,False,0.0,False
 31532,31532,False,True,0,True,,True
-31589,31589,False,True,0,True,1.0,True
+31589,31589,False,True,0,False,1.0,True
 31624,31624,False,True,0,False,0.0,True
 31843,31843,True,False,0,False,0.0,True
 31978,31978,True,False,0,False,0.0,True
@@ -255,12 +255,12 @@
 32412,32412,False,False,0,False,0.0,False
 32419,32419,True,False,0,False,0.0,True
 32601,32601,False,True,0,False,0.0,True
-32677,32677,False,True,0,True,1.0,True
+32677,32677,False,True,0,False,1.0,True
 32894,32894,False,True,0,True,,True
 32951,32951,False,True,0,True,1.0,False
 33287,33287,True,False,0,False,0.0,True
 33597,33597,False,False,0,False,0.0,False
-33678,33678,False,True,0,True,1.0,True
+33678,33678,False,True,0,False,1.0,True
 33705,33705,False,False,0,False,0.0,False
 33891,33891,False,True,0,False,0.0,True
 33948,33948,False,True,0,True,1.0,False
@@ -276,7 +276,7 @@
 34427,34427,True,False,0,False,0.0,True
 34434,34434,False,True,0,False,1.0,False
 34451,34451,False,False,0,False,0.0,False
-34543,34543,False,True,0,True,1.0,True
+34543,34543,False,True,0,False,1.0,True
 34809,34809,False,True,0,True,,True
 34899,34899,True,False,0,False,0.0,True
 35157,35157,False,False,0,False,0.0,False
@@ -285,7 +285,7 @@
 35948,35948,False,True,0,True,,True
 35982,35982,False,False,0,False,0.0,False
 36000,36000,False,False,0,False,0.0,False
-36067,36067,False,True,0,True,1.0,True
+36067,36067,False,True,0,False,1.0,True
 36103,36103,False,True,0,False,0.0,True
 36349,36349,True,False,0,False,0.0,True
 36368,36368,True,False,0,False,0.0,True
@@ -461,7 +461,7 @@
 56507,56507,False,True,0,False,0.0,False
 56512,56512,True,False,0,False,0.0,True
 56521,56521,False,True,0,True,2.0,True
-56525,56525,False,True,0,True,1.0,False
+56525,56525,False,True,0,False,1.0,False
 56548,56548,True,False,0,False,0.0,True
 56550,56550,False,True,0,False,0.0,True
 56589,56589,True,False,0,False,0.0,True
@@ -597,7 +597,7 @@
 69000,69000,False,True,0,True,1.0,False
 69003,69003,False,True,0,False,0.0,False
 69010,69010,False,True,0,True,1.0,False
-69023,69023,False,True,0,True,1.0,False
+69023,69023,False,True,0,False,1.0,False
 69068,69068,False,True,0,False,1.0,True
 69098,69098,True,False,0,False,0.0,True
 69140,69140,False,True,0,False,0.0,True
@@ -609,12 +609,12 @@
 69754,69754,False,True,0,False,0.0,False
 69795,69795,True,False,0,False,0.0,True
 69808,69808,False,True,0,False,0.0,True
-69924,69924,False,True,0,True,1.0,False
+69924,69924,False,True,0,False,1.0,False
 69982,69982,False,True,0,False,1.0,True
 69991,69991,False,True,0,True,1.0,False
 70050,70050,True,False,0,False,0.0,True
 70130,70130,False,True,0,True,1.0,False
-70161,70161,False,True,0,True,0.0,False
+70161,70161,False,True,0,False,0.0,False
 70372,70372,False,True,0,False,0.0,True
 70423,70423,False,True,0,False,0.0,True
 70477,70477,False,True,0,False,0.0,False
@@ -627,8 +627,8 @@
 71013,71013,False,True,0,False,0.0,True
 71035,71035,True,False,0,False,0.0,True
 71058,71058,False,True,0,False,0.0,False
-71102,71102,False,True,0,True,0.0,False
-71132,71132,False,True,0,True,1.0,False
+71102,71102,False,True,0,False,0.0,False
+71132,71132,False,True,0,False,1.0,False
 71174,71174,False,True,0,False,1.0,True
 71228,71228,False,True,0,True,1.0,False
 71279,71279,False,True,0,False,0.0,True
@@ -651,7 +651,7 @@
 71784,71784,False,True,0,True,1.0,False
 71785,71785,True,False,0,False,0.0,True
 71795,71795,True,False,0,False,0.0,True
-71879,71879,False,True,0,True,1.0,False
+71879,71879,False,True,0,False,1.0,False
 71940,71940,True,False,0,False,0.0,True
 71958,71958,False,True,0,False,0.0,False
 71977,71977,False,True,0,True,1.0,False
@@ -674,8 +674,8 @@
 73201,73201,True,False,0,False,0.0,True
 73205,73205,False,True,0,True,1.0,False
 73213,73213,False,True,0,False,0.0,False
-73260,73260,False,True,0,True,0.0,False
-73297,73297,False,True,0,True,1.0,False
+73260,73260,False,True,0,False,0.0,False
+73297,73297,False,True,0,False,1.0,False
 73315,73315,True,False,0,False,0.0,True
 73350,73350,True,False,0,False,0.0,True
 73379,73379,True,False,0,False,0.0,True
@@ -695,7 +695,7 @@
 76387,76387,False,True,0,False,0.0,False
 76389,76389,False,True,0,False,0.0,True
 76395,76395,False,True,0,False,1.0,False
-76398,76398,True,False,0,True,1.0,True
+76398,76398,True,False,0,False,1.0,True
 76423,76423,False,True,0,False,0.0,False
 76433,76433,False,True,0,True,1.0,False
 76435,76435,False,True,0,True,1.0,False
@@ -712,7 +712,7 @@
 77185,77185,True,False,0,False,0.0,True
 77210,77210,True,False,0,False,0.0,True
 77246,77246,False,True,0,False,1.0,False
-77284,77284,True,False,0,True,1.0,True
+77284,77284,True,False,0,False,1.0,True
 77297,77297,False,True,0,False,0.0,True
 77461,77461,False,True,0,True,2.0,False
 77517,77517,True,False,0,False,0.0,True
@@ -728,7 +728,7 @@
 78255,78255,True,False,0,False,0.0,True
 78307,78307,True,False,0,False,0.0,True
 78470,78470,False,True,0,False,0.0,True
-78489,78489,True,False,0,True,1.0,True
+78489,78489,True,False,0,False,1.0,True
 78506,78506,False,True,0,False,1.0,False
 78546,78546,False,True,0,True,1.0,False
 78645,78645,False,True,0,True,2.0,False
@@ -752,7 +752,7 @@
 79228,79228,False,True,0,False,0.0,True
 79237,79237,False,True,0,False,0.0,False
 79244,79244,False,True,0,True,1.0,False
-79245,79245,True,False,0,True,1.0,True
+79245,79245,True,False,0,False,1.0,True
 79327,79327,True,False,0,False,0.0,True
 79376,79376,True,False,0,False,0.0,True
 79392,79392,False,True,0,False,0.0,False
@@ -784,7 +784,7 @@
 80835,80835,True,False,0,False,0.0,True
 80895,80895,False,True,0,False,0.0,False
 80917,80917,False,True,0,False,0.0,True
-81364,81364,True,False,0,True,1.0,True
+81364,81364,True,False,0,False,1.0,True
 81553,81553,False,True,0,False,0.0,False
 82219,82219,False,True,0,True,2.0,False
 82434,82434,False,True,0,False,0.0,False
@@ -793,8 +793,8 @@
 83679,83679,True,False,0,False,0.0,True
 83706,83706,True,False,0,False,0.0,True
 83758,83758,False,True,0,False,0.0,True
-83811,83811,False,True,0,True,1.0,False
-83835,83835,False,True,0,True,1.0,True
+83811,83811,False,True,0,False,1.0,False
+83835,83835,False,True,0,False,1.0,True
 83840,83840,False,True,0,False,0.0,False
 83869,83869,False,True,0,True,1.0,False
 83875,83875,False,True,0,True,2.0,False
@@ -810,8 +810,8 @@
 84626,84626,False,True,0,True,1.0,False
 84649,84649,True,False,0,False,0.0,True
 84669,84669,True,False,0,False,0.0,True
-84701,84701,False,True,0,True,1.0,False
-84749,84749,False,True,0,True,1.0,True
+84701,84701,False,True,0,False,1.0,False
+84749,84749,False,True,0,False,1.0,True
 84811,84811,False,True,0,False,0.0,True
 84900,84900,False,True,0,True,2.0,False
 85007,85007,False,True,0,True,1.0,False
@@ -826,8 +826,8 @@
 85642,85642,False,True,0,False,0.0,True
 85698,85698,True,False,0,False,0.0,True
 85741,85741,True,False,0,False,0.0,True
-85874,85874,False,True,0,True,1.0,True
-85906,85906,False,True,0,True,1.0,False
+85874,85874,False,True,0,False,1.0,True
+85906,85906,False,True,0,False,1.0,False
 86019,86019,False,True,0,True,2.0,False
 86055,86055,False,True,0,False,0.0,True
 86060,86060,True,False,0,False,0.0,True
@@ -844,7 +844,7 @@
 86228,86228,True,False,0,False,0.0,True
 86367,86367,False,True,0,False,0.0,True
 86436,86436,True,False,0,False,0.0,True
-86628,86628,False,True,0,True,1.0,True
+86628,86628,False,True,0,False,1.0,True
 86637,86637,False,True,0,False,0.0,False
 86639,86639,True,False,0,False,0.0,True
 86643,86643,False,True,0,True,1.0,False
@@ -866,7 +866,7 @@
 87929,87929,True,False,0,False,0.0,True
 87970,87970,False,True,0,True,2.0,False
 87974,87974,True,False,0,False,0.0,True
-88036,88036,False,True,0,True,1.0,False
+88036,88036,False,True,0,False,1.0,False
 88040,88040,False,True,0,False,0.0,True
 88079,88079,True,False,0,False,0.0,True
 88083,88083,False,True,0,True,1.0,False
@@ -966,7 +966,7 @@
 95419,95419,True,False,0,False,0.0,True
 95483,95483,False,True,0,False,0.0,True
 95518,95518,True,False,0,False,0.0,True
-95521,95521,False,True,0,True,1.0,False
+95521,95521,False,True,0,False,1.0,False
 95629,95629,True,False,0,False,0.0,True
 95651,95651,True,False,0,False,0.0,True
 96233,96233,False,True,0,False,1.0,False
@@ -981,7 +981,7 @@
 98335,98335,True,False,0,False,0.0,True
 98390,98390,True,False,0,False,0.0,True
 98440,98440,False,True,0,False,0.0,True
-98483,98483,True,False,0,True,1.0,True
+98483,98483,True,False,0,False,1.0,True
 98536,98536,False,True,0,False,0.0,True
 98599,98599,False,True,0,False,0.0,False
 98620,98620,False,True,0,False,0.0,False
@@ -999,7 +999,7 @@
 99220,99220,True,False,0,False,0.0,True
 99267,99267,True,False,0,False,0.0,True
 99299,99299,True,False,0,False,0.0,True
-99363,99363,True,False,0,True,1.0,True
+99363,99363,True,False,0,False,1.0,True
 99495,99495,False,True,0,True,1.0,False
 99510,99510,True,False,0,False,0.0,True
 99529,99529,True,False,0,False,0.0,True
@@ -1019,7 +1019,7 @@
 100437,100437,True,False,0,False,0.0,True
 100525,100525,True,False,0,False,0.0,True
 100542,100542,False,True,0,False,0.0,True
-100581,100581,True,False,0,True,1.0,True
+100581,100581,True,False,0,False,1.0,True
 100660,100660,True,False,0,False,0.0,True
 100815,100815,True,False,0,False,0.0,True
 100835,100835,False,True,0,False,0.0,True
@@ -1045,7 +1045,7 @@
 101154,101154,True,False,0,False,0.0,True
 101172,101172,True,False,0,False,0.0,True
 101224,101224,True,False,0,False,0.0,True
-101285,101285,True,False,0,True,1.0,True
+101285,101285,True,False,0,False,1.0,True
 101327,101327,False,True,0,False,1.0,False
 101403,101403,True,False,0,False,0.0,True
 101450,101450,True,False,0,False,0.0,True
@@ -1067,7 +1067,7 @@
 102659,102659,True,False,0,False,0.0,True
 102665,102665,False,True,0,False,0.0,True
 102696,102696,False,True,0,False,0.0,False
-102723,102723,True,False,0,True,1.0,True
+102723,102723,True,False,0,False,1.0,True
 102732,102732,True,False,0,False,0.0,True
 102793,102793,True,False,0,False,0.0,True
 102847,102847,False,True,0,False,0.0,True
@@ -1075,7 +1075,7 @@
 102980,102980,True,False,0,False,0.0,True
 103000,103000,True,False,0,False,0.0,True
 103496,103496,False,True,0,True,,False
-103583,103583,True,False,0,True,1.0,True
+103583,103583,True,False,0,False,1.0,True
 103745,103745,False,True,0,False,0.0,False
 104009,104009,False,True,0,False,1.0,False
 104020,104020,False,True,0,False,0.0,False

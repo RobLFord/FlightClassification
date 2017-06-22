@@ -1,0 +1,54 @@
+
+----------------------------------------------------------------------------------
+Model : 1
+Resultant Data Set Contains 1176 Records...
+Features: Unnamed: 0, Cou, MajorUsCarrier, Weekday, CruisingSpd, 
+Target: AltCat
+Accuracy of Gini 79.8866855524
+Accuracy of Naive Bayes 67.4220963173
+----------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+Model : 2
+Resultant Data Set Contains 1176 Records...
+Features: Unnamed: 0, Cou, MajorUsCarrier, Weekday, CruisingSpd, 
+Target: AltCat
+Accuracy of Gini 81.5864022663
+Accuracy of Naive Bayes 67.4220963173
+----------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+Model : 3
+Resultant Data Set Contains 1176 Records...
+Features: Unnamed: 0, Cou, MajorUsCarrier, Weekday, CruisingSpd, 
+Target: AltCat
+Accuracy of Gini 81.8696883853
+Accuracy of Naive Bayes 67.4220963173
+----------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+Model : 4
+Resultant Data Set Contains 1176 Records...
+Features: Unnamed: 0, Cou, MajorUsCarrier, Weekday, CruisingSpd, 
+Target: AltCat
+Accuracy of Gini 81.8696883853
+Accuracy of Naive Bayes 67.4220963173
+----------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+Model : 5
+Resultant Data Set Contains 1176 Records...
+Features: Unnamed: 0, Cou, MajorUsCarrier, Weekday, CruisingSpd, 
+Target: AltCat
+Accuracy of Gini 83.5694050992
+Accuracy of Naive Bayes 65.4390934844
+----------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------
+Model : 6
+Resultant Data Set Contains 1176 Records...
+Features: Unnamed: 0, Cou, MajorUsCarrier, Weekday, CruisingSpd, 
+Target: AltCat
+Accuracy of Gini 83.5694050992
+Accuracy of Naive Bayes 65.4390934844
+----------------------------------------------------------------------------------

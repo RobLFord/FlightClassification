@@ -62,14 +62,14 @@ def create_df(path):
 	return flight_DF
 
 def output_raw_csv(df):
-	filename = "raw_df.csv"
+	filename = ".\\DataFrames\\raw_df.csv"
 	csv_out = df.to_csv(encoding='utf-8')
 	csv_out_file = open(filename, "w",encoding='utf-8')
 	csv_out_file.write(csv_out)
 	csv_out_file.close()
 
 
-def preprocessing(df):
+def preprocessing(df, lowAlt, medAlt, highAlt, cruising_threshold):
 
 	# Remove flights that have landed
 	GROUNDED = df[df['Gnd'] == True].index.tolist()
@@ -107,13 +107,13 @@ def preprocessing(df):
 
 	# Cruising Speed Categorization
 	# Threshold: 400 knots
-	df['CruisingSpd'] = df['Spd'] > 375.
+	df['CruisingSpd'] = df['Spd'] > cruising_threshold
 
 	#Altitude Categorization
 	#High = 30,000ft+
 	#Medium = 10,000ft - 30,000ft
 	#Low = Below 10,000ft
-	df['AltCat'] = pd.cut(df['Alt'], bins=[0., 10000., 29000.,100000.], include_lowest=True, labels=[int(0),int(1),int(2)])
+	df['AltCat'] = pd.cut(df['Alt'], bins=[0., lowAlt, medAlt,highAlt], include_lowest=True, labels=[int(0),int(1),int(2)])
 
 	# Create boolean field for whether Int'l Flight - training/verification use
 	# Note: All US Airport Designators begin with the letter K per the FAA
@@ -199,7 +199,7 @@ def decisionTree(X_train,
 				min_samples_leaf,
 				min_weight_fraction_leaf,
 				max_leaf_nodes,
-				file, i):
+				file, model):
 				
 	clf_gini = DecisionTreeClassifier(criterion = "gini",
 									max_depth=max_depth,
@@ -215,7 +215,7 @@ def decisionTree(X_train,
 	file.write("\nAccuracy of Gini " + str(accuracy_score(y_test,y_pred)*100))
 	file.flush()
 	
-	dot_file_name = ".\\Dots\\gini_model_" + str(i) + '.dot'
+	dot_file_name = ".\\Dots\\gini_model_" + str(model) + '.dot'
 	write_dot(clf_gini, features, dot_file_name)
 	
 def naiveBayes(X_train, X_test, y_train, y_test, file):
@@ -241,7 +241,7 @@ def before_preprocess_visual(df):
 	raw_df.loc[LESSTHAN_0,'Alt'] = 0
 	
 	print("Calculating summary of visual data")
-	data_summary('raw_visual_data_before_process_summary.txt', raw_df)
+	data_summary('.\\Summary\\raw_visual_data_before_preprocess_summary.txt', raw_df)
 	
 	raw_df['FlightData'] = raw_df['Alt'].index.tolist()
 	
@@ -287,7 +287,7 @@ def before_preprocess_visual(df):
 	plt.savefig('.\\Plots\\OpIcao_bar_plot_raw.jpg', dpi=dpi)
 	plt.clf()
 	
-def after_preprocess_visual(df):
+def after_preprocess_visual(df, model):
 	fontsize=12
 	dpi=500
 	figsize=(15, 8)
@@ -296,84 +296,125 @@ def after_preprocess_visual(df):
 	cou_bar_plot = cou_group.plot(kind='bar', title="U.S Country", figsize=figsize, fontsize=fontsize, grid=True)
 	cou_bar_plot.set_xlabel("U.S Country")
 	cou_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\country_bar_plot.jpg', dpi=dpi)
+	fig_name = '.\\Plots\\country_bar_plot_model_' + str(model) + '.jpg'
+	plt.savefig(fig_name, dpi=dpi)
 	plt.clf()
 	
 	majorCarrier_group = df.groupby('MajorUsCarrier').size().sort_values(ascending=False)
 	majorCarrier_bar_plot = majorCarrier_group.plot(kind='bar', title="Major U.S Carrier", figsize=figsize, fontsize=fontsize, grid=True)
 	majorCarrier_bar_plot.set_xlabel("Major U.S Carrier")
 	majorCarrier_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\MajorUsCarrier_bar_plot.jpg', dpi=dpi)
+	fig_name = '.\\Plots\\MajorUsCarrier_bar_plot_model_' + str(model) + '.jpg'
+	plt.savefig(fig_name, dpi=dpi)
 	plt.clf()
 	
 	cruising_group = df.groupby('CruisingSpd').size().sort_values(ascending=False)
 	cruising_bar_plot = cruising_group.plot(kind='bar', title="Cruising Speed", figsize=figsize, fontsize=fontsize, grid=True)
 	cruising_bar_plot.set_xlabel("Cruising Speed")
 	cruising_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\cruising_bar_plot.jpg', dpi=dpi)
+	fig_name = '.\\Plots\\cruising_bar_plot_model_' + str(model) + '.jpg'
+	plt.savefig(fig_name, dpi=dpi)
 	plt.clf()
 	
 	altCat_group = df.groupby('AltCat').size().sort_values(ascending=False)
 	altCat_bar_plot = altCat_group.plot(kind='bar', title="Altitude Catagory", figsize=figsize, fontsize=fontsize, grid=True)
 	altCat_bar_plot.set_xlabel("Altitude Catagory 0=low 1=med 2=high")
 	altCat_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\alt_cat_bar_plot.jpg', dpi=dpi)
+	fig_name = '.\\Plots\\alt_cat_bar_plot_model_' + str(model) + '.jpg'
+	plt.savefig(fig_name, dpi=dpi)
 	plt.clf()
 	
 	international_group = df.groupby('Intl').size().sort_values(ascending=False)
 	international_bar_plot = international_group.plot(kind='bar', title="International vs Domestic", figsize=figsize, fontsize=fontsize, grid=True)
 	international_bar_plot.set_xlabel("International")
 	international_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\international_bar_plot.jpg', dpi=dpi)
+	fig_name = '.\\Plots\\international_bar_plot_model_' + str(model) + '.jpg'
+	plt.savefig(fig_name, dpi=dpi)
 	plt.clf()
 	
 def make_models(df):
-	for i in range(1,6):
-		model_log_file = '.\\Logs\\Model_' + str(i) + '.txt'
-		model_log = open(model_log_file, "w")
+	model_log_file = '.\\Logs\\Models_log.txt'
+	model_log = open(model_log_file, "w")
+	for i in range(1,7):
+		
 		print('\nModel : ', i)
+		model_log.write("\n----------------------------------------------------------------------------------\n")
+		model_log.flush()
 		model_log.write('Model : ' + str(i))
 		model_log.flush()
 		
 		if(i == 1):
+			# Preprocessing parameters
+			lowAlt = 10000.
+			medAlt = 29000.
+			highAlt = 100000.
+			cruising_threshold = 375.
+			# Decision tree classifier parameters
 			max_depth = None # int
-			min_samples_split = 2
+			min_samples_split = 5
 			min_samples_leaf = 1
 			min_weight_fraction_leaf = 0 # float 
 			max_leaf_nodes = None # int
 		elif(i == 2):
-			max_depth = None # int
-			min_samples_split = 5
-			min_samples_leaf = 1
-			min_weight_fraction_leaf = 0 # float 
-			max_leaf_nodes = None # int
-		elif(i == 3):
-			max_depth = None # int
-			min_samples_split = 5
-			min_samples_leaf = 2
-			min_weight_fraction_leaf = 0 # float 
-			max_leaf_nodes = None # int
-		elif(i == 4):
-			max_depth = None # int
-			min_samples_split = 5
-			min_samples_leaf = 2
-			min_weight_fraction_leaf = 0.5 # float 
-			max_leaf_nodes = None # int
-		elif(i == 5):
-			max_depth = 2 # int
-			min_samples_split = 5
-			min_samples_leaf = 2
-			min_weight_fraction_leaf = 0 # float 
-			max_leaf_nodes = None # int
+			# Preprocessing parameters
+			# No change
 			
+			# Decision tree classifier parameters
+			# max_depth = (No change)
+			min_samples_split = 5
+			min_samples_leaf = 2 # --- changed to improve accuracy---
+			# min_weight_fraction_leaf = (No change)
+			# max_leaf_nodes = (No change)
+		elif(i == 3):
+			# Preprocessing parameters
+			# No change
+			
+			# Decision tree classifier parameters
+			# max_depth = None (No change)
+			min_samples_split = 2 # --- changed to improve accuracy---
+			min_samples_leaf = 2 # --- changed to improve accuracy---
+			# min_weight_fraction_leaf = (No change)
+			# max_leaf_nodes = (No change)
+		elif(i == 4):
+			# Preprocessing parameters
+			lowAlt = 17050.
+			medAlt = 32000.
+			highAlt = 36000.
+			cruising_threshold = 375.
+			# Decision tree classifier parameters
+			# No change
+		elif(i == 5):
+			# Preprocessing parameters
+			# lowAlt = (No change)
+			# medAlt = (No change)
+			# highAlt = (No change)
+			cruising_threshold = 395. # Equal to mean from before preprocess summary
+			# Decision tree classifier parameters
+			# No change
+		elif(i == 6):
+			# Preprocessing parameters
+			# lowAlt = (No change)
+			# medAlt = (No change)
+			# highAlt = (No change)
+			cruising_threshold = 427. # Equal to 50% from before preprocess summary
+			# Decision tree classifier parameters
+			# No change
+			
+		print("Preprocessing")
+		processed_df = preprocessing(df, lowAlt, medAlt, highAlt, cruising_threshold)
+		
+		# Visualization after proprocessing
+		print("Creating plots of processed data")
+		after_preprocess_visual(processed_df, i)
+	
 		file_name = '.\\Dataframes\\Model_' + str(i) + '.csv'
-		write_json_csv('csv', file_name, df)
+		write_json_csv('csv', file_name, processed_df)
 
-		print("Resultant Data Set Contains " + str(df.shape[0]) + " Records...")
-		model_log.write("\nResultant Data Set Contains " + str(df.shape[0]) + " Records...")
+		print("Resultant Data Set Contains " + str(processed_df.shape[0]) + " Records...")
+		model_log.write("\nResultant Data Set Contains " + str(processed_df.shape[0]) + " Records...")
 		model_log.flush()
 		
-		features = list(df.columns[:5])
+		features = list(processed_df.columns[:5])
 		print("Features: ", features)
 		
 		model_log.write("\nFeatures: ")
@@ -383,13 +424,13 @@ def make_models(df):
 			model_log.write(item + ", ")
 			model_log.flush()
 		
-		target = df.columns[5]
+		target = processed_df.columns[5]
 		print("Target: ", target)
 		model_log.write("\nTarget: " + target)
 		model_log.flush()
 
-		y = df['Intl']
-		x = df[features]
+		y = processed_df['Intl']
+		x = processed_df[features]
 
 		#Automatically split into training and test, then run classification and output accuracy numbers
 		X_train, X_test, y_train, y_test = train_test_split( x, y, test_size = 0.3, random_state = 100)
@@ -405,8 +446,10 @@ def make_models(df):
 					max_leaf_nodes,
 					model_log, i)
 		naiveBayes(X_train, X_test, y_train, y_test, model_log)
+		model_log.write("\n----------------------------------------------------------------------------------\n")
+		model_log.flush()
 		
-		model_log.close()
+	model_log.close()
 		
 def main():
 	path = '.\\Data'
@@ -417,27 +460,20 @@ def main():
 			print("Storing raw data to CSV")
 			output_raw_csv(df_json)
 			print("Reading raw data from CSV")
-			df = pd.read_csv('raw_df.csv')
+			df = pd.read_csv('.\\DataFrames\\raw_df.csv')
 	else:
 		print("Reading raw data from CSV")
-		df = pd.read_csv('raw_df.csv')
+		df = pd.read_csv('.\\DataFrames\\raw_df.csv')
 		
 	
 	# Summary of data
 	print_summary = True
 	if(print_summary):
 		print("Calculating summary of raw data")
-		data_summary('raw_data_summary.txt', df)
+		data_summary('.\\Summary\\raw_data_summary.txt', df)
 	
 	# Visualiztion before preprocessing data
 	before_preprocess_visual(df)
-
-	print("Preprocessing")
-	df = preprocessing(df)
-	
-	# Visualization after proprocessing
-	print("Creating plots of processed data")
-	after_preprocess_visual(df)
 	
 	print("Creating models from data")
 	make_models(df)
