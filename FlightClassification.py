@@ -440,7 +440,7 @@ def main():
 	after_preprocess_visual(df)
 	
 	print("Creating models from data")
-	# make_models(df)
+	make_models(df)
 
 if __name__ == '__main__':
 	MAJORUS = ["JBU", "AAL", "DAL", "UAL", "ASA", "AAY", "FFT", "HAL", "SWA", "NKS", "VRD", "ENY", "ASQ", "SKW"]
