@@ -44,7 +44,7 @@ def create_df(path):
 		objects = ijson.items(f, 'acList.item')
 		
 		#Parsing json for Flights only
-		flights = (o for o in objects if o['Species'] == 1) #filter on ground aircraft
+		flights = (o for o in objects if o['Species'] == 1) #filter on aircraft type
 		flights = (o for o in flights if o['Mil'] == False) #only look at civilian aviation
 		
 		#Parsing data based on attributes we want to use
@@ -62,7 +62,6 @@ def create_df(path):
 	return flight_DF
 
 def output_raw_csv(df):
-	# filename = "raw_df_" + time.strftime("%b%d%Y_%H_%M_%S", time.localtime()) + ".csv"
 	filename = "raw_df.csv"
 	csv_out = df.to_csv(encoding='utf-8')
 	csv_out_file = open(filename, "w",encoding='utf-8')
@@ -236,28 +235,44 @@ def data_summary(file_name, df):
 def before_preprocess_visual(df):
 	pd.options.mode.chained_assignment = None
 	raw_df = df[['Alt', 'Spd','OpIcao']]
+	
+	# Fixing values with negative values
+	LESSTHAN_0 = raw_df.Alt < 0
+	raw_df.loc[LESSTHAN_0,'Alt'] = 0
+	
+	print("Calculating summary of visual data")
+	data_summary('raw_visual_data_before_process_summary.txt', raw_df)
+	
 	raw_df['FlightData'] = raw_df['Alt'].index.tolist()
 	
-	alt_scat_plot = raw_df.plot(kind='scatter', x='FlightData', y='Alt', title="Altitude ADS-B Records")
+	fontsize=12
+	dpi=500
+	figsize=(15, 8)
+	
+	print("Creating plots of raw data")
+	xlim = (0,len(raw_df['FlightData']))
+	ylim = (0,125e3)
+	alt_scat_plot = raw_df.plot(kind='scatter', x='FlightData', y='Alt', xlim=xlim, ylim=ylim, grid=True, title="Altitude ADS-B Records", figsize=figsize, fontsize=fontsize)
 	alt_scat_plot.set_xlabel("Record Number")
 	alt_scat_plot.set_ylabel("Altitude (Feet)")
-	plt.savefig('.\\Plots\\alt_scat_plot_raw.jpg')
+	plt.savefig('.\\Plots\\alt_scat_plot_raw.jpg', dpi=dpi)
 	plt.clf()
 	
-	alt_box_plot = raw_df.plot(kind='box', x='FlightData', y='Alt', title="Altitude ADS-B Records")
+	alt_box_plot = raw_df.plot(kind='box', x='FlightData', y='Alt', ylim=ylim, grid=True, title="Altitude ADS-B Records", figsize=figsize, fontsize=fontsize)
 	alt_box_plot.set_ylabel("Altitude (Feet)")
-	plt.savefig('.\\Plots\\alt_box_plot_raw.jpg')
+	plt.savefig('.\\Plots\\alt_box_plot_raw.jpg', dpi=dpi)
 	plt.clf()
 	
-	spd_scat_plot = raw_df.plot(kind='scatter', x='FlightData', y='Spd', title="Speed ADS-B Records")
+	ylim = (0,605)
+	spd_scat_plot = raw_df.plot(kind='scatter', x='FlightData', y='Spd', xlim=xlim, ylim=ylim, grid=True, title="Speed ADS-B Records", figsize=figsize, fontsize=fontsize)
 	spd_scat_plot.set_xlabel("Record Number")
 	spd_scat_plot.set_ylabel("Speed (Knots)")
-	plt.savefig('.\\Plots\\spd_scat_plot_raw.jpg')
+	plt.savefig('.\\Plots\\spd_scat_plot_raw.jpg', dpi=dpi)
 	plt.clf()
 	
-	spd_box_plot = raw_df.plot(kind='box', x='FlightData', y='Spd', title="Speed ADS-B Records")
+	spd_box_plot = raw_df.plot(kind='box', x='FlightData', y='Spd', ylim=ylim, grid=True, title="Speed ADS-B Records", figsize=figsize, fontsize=fontsize)
 	spd_box_plot.set_ylabel("Speed (Knots)")
-	plt.savefig('.\\Plots\\spd_box_plot_raw.jpg')
+	plt.savefig('.\\Plots\\spd_box_plot_raw.jpg', dpi=dpi)
 	plt.clf()
 	
 	index_list = []
@@ -265,47 +280,51 @@ def before_preprocess_visual(df):
 		index_list += raw_df[raw_df['OpIcao'] == i].index.tolist()
 		
 	raw_opicao_df = raw_df.loc[index_list]
-	opicao_group = raw_opicao_df.groupby('OpIcao')
-	opicao_bar_plot = opicao_group.size().plot(kind='bar',title="Major US OpIcao ADS-B Records")
+	opicao_group = raw_opicao_df.groupby('OpIcao').size().sort_values(ascending=False)
+	opicao_bar_plot = opicao_group.plot(kind='bar', grid=True, title="Major U.S OpIcao ADS-B Records", figsize=figsize, fontsize=fontsize)
 	opicao_bar_plot.set_xlabel("OpIcao")
 	opicao_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\OpIcao_bar_plot_raw.jpg')
+	plt.savefig('.\\Plots\\OpIcao_bar_plot_raw.jpg', dpi=dpi)
 	plt.clf()
 	
 def after_preprocess_visual(df):
-	cou_group = df.groupby('Cou')
-	cou_bar_plot = cou_group.size().plot(kind='bar', title="U.S Country")
+	fontsize=12
+	dpi=500
+	figsize=(15, 8)
+	
+	cou_group = df.groupby('Cou').size().sort_values(ascending=False)
+	cou_bar_plot = cou_group.plot(kind='bar', title="U.S Country", figsize=figsize, fontsize=fontsize, grid=True)
 	cou_bar_plot.set_xlabel("U.S Country")
 	cou_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\country_bar_plot.jpg')
+	plt.savefig('.\\Plots\\country_bar_plot.jpg', dpi=dpi)
 	plt.clf()
 	
-	majorCarrier_group = df.groupby('MajorUsCarrier')
-	majorCarrier_bar_plot = majorCarrier_group.size().plot(kind='bar', title="Major U.S Carrier")
+	majorCarrier_group = df.groupby('MajorUsCarrier').size().sort_values(ascending=False)
+	majorCarrier_bar_plot = majorCarrier_group.plot(kind='bar', title="Major U.S Carrier", figsize=figsize, fontsize=fontsize, grid=True)
 	majorCarrier_bar_plot.set_xlabel("Major U.S Carrier")
 	majorCarrier_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\MajorUsCarrier_bar_plot.jpg')
+	plt.savefig('.\\Plots\\MajorUsCarrier_bar_plot.jpg', dpi=dpi)
 	plt.clf()
 	
-	cruising_group = df.groupby('CruisingSpd')
-	cruising_bar_plot = cruising_group.size().plot(kind='bar', title="Cruising Speed")
+	cruising_group = df.groupby('CruisingSpd').size().sort_values(ascending=False)
+	cruising_bar_plot = cruising_group.plot(kind='bar', title="Cruising Speed", figsize=figsize, fontsize=fontsize, grid=True)
 	cruising_bar_plot.set_xlabel("Cruising Speed")
 	cruising_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\cruising_bar_plot.jpg')
+	plt.savefig('.\\Plots\\cruising_bar_plot.jpg', dpi=dpi)
 	plt.clf()
 	
-	altCat_group = df.groupby('AltCat')
-	altCat_bar_plot = altCat_group.size().plot(kind='bar', title="Altitude Catagory")
+	altCat_group = df.groupby('AltCat').size().sort_values(ascending=False)
+	altCat_bar_plot = altCat_group.plot(kind='bar', title="Altitude Catagory", figsize=figsize, fontsize=fontsize, grid=True)
 	altCat_bar_plot.set_xlabel("Altitude Catagory 0=low 1=med 2=high")
 	altCat_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\alt_cat_bar_plot.jpg')
+	plt.savefig('.\\Plots\\alt_cat_bar_plot.jpg', dpi=dpi)
 	plt.clf()
 	
-	international_group = df.groupby('Intl')
-	international_bar_plot = international_group.size().plot(kind='bar', title="International vs Domestic")
+	international_group = df.groupby('Intl').size().sort_values(ascending=False)
+	international_bar_plot = international_group.plot(kind='bar', title="International vs Domestic", figsize=figsize, fontsize=fontsize, grid=True)
 	international_bar_plot.set_xlabel("International")
 	international_bar_plot.set_ylabel("Total")
-	plt.savefig('.\\Plots\\international_bar_plot.jpg')
+	plt.savefig('.\\Plots\\international_bar_plot.jpg', dpi=dpi)
 	plt.clf()
 	
 def make_models(df):
@@ -395,26 +414,33 @@ def main():
 	if(len(sys.argv) > 1):
 		if(sys.argv[1] == 'new_data'):
 			df_json = create_df(path)
+			print("Storing raw data to CSV")
 			output_raw_csv(df_json)
+			print("Reading raw data from CSV")
 			df = pd.read_csv('raw_df.csv')
 	else:
+		print("Reading raw data from CSV")
 		df = pd.read_csv('raw_df.csv')
 		
 	
 	# Summary of data
 	print_summary = True
 	if(print_summary):
+		print("Calculating summary of raw data")
 		data_summary('raw_data_summary.txt', df)
 	
 	# Visualiztion before preprocessing data
 	before_preprocess_visual(df)
 
+	print("Preprocessing")
 	df = preprocessing(df)
 	
 	# Visualization after proprocessing
+	print("Creating plots of processed data")
 	after_preprocess_visual(df)
 	
-	make_models(df)
+	print("Creating models from data")
+	# make_models(df)
 
 if __name__ == '__main__':
 	MAJORUS = ["JBU", "AAL", "DAL", "UAL", "ASA", "AAY", "FFT", "HAL", "SWA", "NKS", "VRD", "ENY", "ASQ", "SKW"]
