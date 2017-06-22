@@ -287,42 +287,46 @@ def before_preprocess_visual(df):
 	plt.savefig('.\\Plots\\OpIcao_bar_plot_raw.jpg', dpi=dpi)
 	plt.clf()
 	
-def after_preprocess_visual(df, model):
+def after_preprocess_visual(df, model, remove_attribute):
 	fontsize=12
 	dpi=500
 	figsize=(15, 8)
 	
-	cou_group = df.groupby('Cou').size().sort_values(ascending=False)
-	cou_bar_plot = cou_group.plot(kind='bar', title="U.S Country", figsize=figsize, fontsize=fontsize, grid=True)
-	cou_bar_plot.set_xlabel("U.S Country")
-	cou_bar_plot.set_ylabel("Total")
-	fig_name = '.\\Plots\\country_bar_plot_model_' + str(model) + '.jpg'
-	plt.savefig(fig_name, dpi=dpi)
-	plt.clf()
+	if(remove_attribute != 5):
+		cou_group = df.groupby('Cou').size().sort_values(ascending=False)
+		cou_bar_plot = cou_group.plot(kind='bar', title="U.S Country", figsize=figsize, fontsize=fontsize, grid=True)
+		cou_bar_plot.set_xlabel("U.S Country")
+		cou_bar_plot.set_ylabel("Total")
+		fig_name = '.\\Plots\\country_bar_plot_model_' + str(model) + '.jpg'
+		plt.savefig(fig_name, dpi=dpi)
+		plt.clf()
 	
-	majorCarrier_group = df.groupby('MajorUsCarrier').size().sort_values(ascending=False)
-	majorCarrier_bar_plot = majorCarrier_group.plot(kind='bar', title="Major U.S Carrier", figsize=figsize, fontsize=fontsize, grid=True)
-	majorCarrier_bar_plot.set_xlabel("Major U.S Carrier")
-	majorCarrier_bar_plot.set_ylabel("Total")
-	fig_name = '.\\Plots\\MajorUsCarrier_bar_plot_model_' + str(model) + '.jpg'
-	plt.savefig(fig_name, dpi=dpi)
-	plt.clf()
+	if(remove_attribute != 4):
+		majorCarrier_group = df.groupby('MajorUsCarrier').size().sort_values(ascending=False)
+		majorCarrier_bar_plot = majorCarrier_group.plot(kind='bar', title="Major U.S Carrier", figsize=figsize, fontsize=fontsize, grid=True)
+		majorCarrier_bar_plot.set_xlabel("Major U.S Carrier")
+		majorCarrier_bar_plot.set_ylabel("Total")
+		fig_name = '.\\Plots\\MajorUsCarrier_bar_plot_model_' + str(model) + '.jpg'
+		plt.savefig(fig_name, dpi=dpi)
+		plt.clf()
 	
-	cruising_group = df.groupby('CruisingSpd').size().sort_values(ascending=False)
-	cruising_bar_plot = cruising_group.plot(kind='bar', title="Cruising Speed", figsize=figsize, fontsize=fontsize, grid=True)
-	cruising_bar_plot.set_xlabel("Cruising Speed")
-	cruising_bar_plot.set_ylabel("Total")
-	fig_name = '.\\Plots\\cruising_bar_plot_model_' + str(model) + '.jpg'
-	plt.savefig(fig_name, dpi=dpi)
-	plt.clf()
+	if(remove_attribute != 1):
+		cruising_group = df.groupby('CruisingSpd').size().sort_values(ascending=False)
+		cruising_bar_plot = cruising_group.plot(kind='bar', title="Cruising Speed", figsize=figsize, fontsize=fontsize, grid=True)
+		cruising_bar_plot.set_xlabel("Cruising Speed")
+		cruising_bar_plot.set_ylabel("Total")
+		fig_name = '.\\Plots\\cruising_bar_plot_model_' + str(model) + '.jpg'
+		plt.savefig(fig_name, dpi=dpi)
+		plt.clf()
 	
-	altCat_group = df.groupby('AltCat').size().sort_values(ascending=False)
-	altCat_bar_plot = altCat_group.plot(kind='bar', title="Altitude Catagory", figsize=figsize, fontsize=fontsize, grid=True)
-	altCat_bar_plot.set_xlabel("Altitude Catagory 0=low 1=med 2=high")
-	altCat_bar_plot.set_ylabel("Total")
-	fig_name = '.\\Plots\\alt_cat_bar_plot_model_' + str(model) + '.jpg'
-	plt.savefig(fig_name, dpi=dpi)
-	plt.clf()
+	if(remove_attribute != 2):
+		altCat_group = df.groupby('AltCat').size().sort_values(ascending=False)
+		altCat_bar_plot = altCat_group.plot(kind='bar', title="Altitude Catagory", figsize=figsize, fontsize=fontsize, grid=True)
+		altCat_bar_plot.set_xlabel("Altitude Catagory 0=low 1=med 2=high")
+		altCat_bar_plot.set_ylabel("Total")
+		fig_name = '.\\Plots\\alt_cat_bar_plot_model_' + str(model) + '.jpg'
+		plt.savefig(fig_name, dpi=dpi)
+		plt.clf()
 	
 	international_group = df.groupby('Intl').size().sort_values(ascending=False)
 	international_bar_plot = international_group.plot(kind='bar', title="International vs Domestic", figsize=figsize, fontsize=fontsize, grid=True)
@@ -343,6 +347,7 @@ def make_models(df):
 		model_log.write('Model : ' + str(i))
 		model_log.flush()
 		
+		remove_attribute = 0
 		if(i == 1):
 			# Preprocessing parameters
 			lowAlt = 10000.
@@ -360,22 +365,12 @@ def make_models(df):
 			# No change
 			
 			# Decision tree classifier parameters
-			# max_depth = (No change)
-			# min_samples_split = (No change)
-			min_samples_leaf = 3 # --- changed to improve accuracy---
-			# min_weight_fraction_leaf = (No change)
-			# max_leaf_nodes = (No change)
-		elif(i == 3):
-			# Preprocessing parameters
-			# No change
-			
-			# Decision tree classifier parameters
 			# max_depth = None (No change)
 			# min_samples_split = (No change)
 			min_samples_leaf = 1 # --- changed to improve accuracy---
 			# min_weight_fraction_leaf = (No change)
 			# max_leaf_nodes = (No change)
-		elif(i == 4):
+		elif(i == 3):
 			# Preprocessing parameters
 			lowAlt = 17050.
 			medAlt = 32000.
@@ -383,7 +378,7 @@ def make_models(df):
 			# cruising_threshold = (No change)
 			# Decision tree classifier parameters
 			# No change
-		elif(i == 5):
+		elif(i == 4):
 			# Preprocessing parameters
 			# lowAlt = (No change)
 			# medAlt = (No change)
@@ -391,7 +386,7 @@ def make_models(df):
 			cruising_threshold = 248.252883 # Equal to 1 std from mean from before preprocess summary
 			# Decision tree classifier parameters
 			# No change
-		elif(i == 6):
+		elif(i == 5):
 			# Preprocessing parameters
 			# lowAlt = (No change)
 			# medAlt = (No change)
@@ -399,14 +394,34 @@ def make_models(df):
 			cruising_threshold = 394.646672 # Equal to mean from before preprocess summary
 			# Decision tree classifier parameters
 			# No change
+		elif(i == 6):
+			# Preprocessing parameters
+			# No change
+			
+			# Decision tree classifier parameters
+			# No change
+			
+			#Remove a attribute to see effect.
+			remove_attribute = 1
 			
 		print("Preprocessing")
 		processed_df = preprocessing(df, lowAlt, medAlt, highAlt, cruising_threshold)
 		
+		if(remove_attribute == 1):
+			del processed_df['CruisingSpd']
+		elif(remove_attribute == 2):
+			del processed_df['AltCat']
+		elif(remove_attribute == 3):
+			del processed_df['Weekday']
+		elif(remove_attribute == 4):
+			del processed_df['MajorUsCarrier']
+		elif(remove_attribute == 5):
+			del processed_df['Cou']
+			
 		# Visualization after proprocessing
 		print("Creating plots of processed data")
-		after_preprocess_visual(processed_df, i)
-	
+		after_preprocess_visual(processed_df, i, remove_attribute)
+		
 		file_name = '.\\Dataframes\\Model_' + str(i) + '.csv'
 		write_json_csv('csv', file_name, processed_df)
 
@@ -414,7 +429,7 @@ def make_models(df):
 		model_log.write("\nResultant Data Set Contains " + str(processed_df.shape[0]) + " Records...")
 		model_log.flush()
 		
-		features = list(processed_df.columns[:5])
+		features = list(processed_df.columns[:(len(processed_df.columns)-1)])
 		print("Features: ", features)
 		
 		model_log.write("\nFeatures: ")
@@ -424,7 +439,7 @@ def make_models(df):
 			model_log.write(item + ", ")
 			model_log.flush()
 		
-		target = processed_df.columns[5]
+		target = processed_df.columns[(len(processed_df.columns)-1)]
 		print("Target: ", target)
 		model_log.write("\nTarget: " + target)
 		model_log.flush()
